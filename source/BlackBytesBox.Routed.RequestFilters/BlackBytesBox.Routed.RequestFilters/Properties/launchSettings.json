@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BlackBytesBox.Routed.RequestFilters": {
+      "commandName": "Project",
+      "commandLineArgs": ""
+    }
+  }
+}

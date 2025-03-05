@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions;
-using BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions.BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions;
 
 using Microsoft.AspNetCore.Builder;

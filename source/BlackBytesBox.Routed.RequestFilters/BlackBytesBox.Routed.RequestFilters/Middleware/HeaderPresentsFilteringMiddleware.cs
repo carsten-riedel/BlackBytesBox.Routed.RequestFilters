@@ -99,7 +99,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Continuing request processing despite blacklisted header due to configuration.");
+                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(HeaderPresentsFilteringMiddleware));
                     await _nextMiddleware(context);
                     return;
                 }

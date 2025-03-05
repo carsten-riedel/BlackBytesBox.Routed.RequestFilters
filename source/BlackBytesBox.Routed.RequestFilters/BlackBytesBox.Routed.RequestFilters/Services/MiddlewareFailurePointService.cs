@@ -121,8 +121,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
                 _logger.LogDebug("Updated failure summary for RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.",requestIp, current.FailurePoint);
                 return current;
             });
-
-            _logger.LogInformation("AddOrUpdateFailurePointAsync completed for RequestIp: {RequestIp}", requestIp);
         }
     }
 }

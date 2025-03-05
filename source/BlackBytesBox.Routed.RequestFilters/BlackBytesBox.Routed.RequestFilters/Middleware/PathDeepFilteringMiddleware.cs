@@ -83,7 +83,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(HostNameFilteringMiddleware));
+                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(PathDeepFilteringMiddleware));
                     await _nextMiddleware(context);
                     return;
                 }

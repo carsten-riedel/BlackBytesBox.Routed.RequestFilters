@@ -70,6 +70,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
 
         // Thread‑safe collections for failure summaries.
         private readonly PerKeyLockableList<FailureSummaryBySource> _summaryBySource = new();
+
         private readonly PerKeyLockable<FailureSummaryByIp> _summaryByIp = new();
 
         private readonly ILogger<MiddlewareFailurePointService> _logger;
@@ -95,7 +96,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
         /// <returns>A task representing the asynchronous operation.</returns>
         public async Task AddOrUpdateFailurePointAsync(string requestIp, string failureSource, int failurePoint, DateTime requestedTime)
         {
-            _logger.LogInformation("AddOrUpdateFailurePointAsync started for RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}",requestIp, failureSource, failurePoint, requestedTime);
+            _logger.LogInformation("AddOrUpdateFailurePointAsync started for RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}", requestIp, failureSource, failurePoint, requestedTime);
 
             // Update the failure summary by source for the given requestIp key.
             await _summaryBySource.UpdateAsync(requestIp, list =>
@@ -104,12 +105,12 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
                 if (item == null)
                 {
                     list.Add(new FailureSummaryBySource(failureSource, failurePoint));
-                    _logger.LogDebug("Created new failure summary for Source {Source} on RequestIp {RequestIp} with initial FailurePoint {FailurePoint}.",failureSource, requestIp, failurePoint);
+                    _logger.LogDebug("Created new failure summary for Source {Source} on RequestIp {RequestIp} with initial FailurePoint {FailurePoint}.", failureSource, requestIp, failurePoint);
                 }
                 else
                 {
                     item.FailurePoint += failurePoint;
-                    _logger.LogDebug("Updated failure summary for Source {Source} on RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.",failureSource, requestIp, item.FailurePoint);
+                    _logger.LogDebug("Updated failure summary for Source {Source} on RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.", failureSource, requestIp, item.FailurePoint);
                 }
             });
 
@@ -118,9 +119,19 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
             {
                 current ??= new FailureSummaryByIp(0);
                 current.FailurePoint += failurePoint;
-                _logger.LogDebug("Updated failure summary for RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.",requestIp, current.FailurePoint);
+                _logger.LogDebug("Updated failure summary for RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.", requestIp, current.FailurePoint);
                 return current;
             });
+        }
+
+        public async Task<IReadOnlyList<FailureSummaryBySource>> GetSummaryBySourceAsync(string requestIp)
+        {
+            return await _summaryBySource.GetAsync(requestIp);
+        }
+
+        public async Task<FailureSummaryByIp> GetSummaryByIPAsync(string requestIp)
+        {
+            return await _summaryByIp.GetAsync(requestIp);
         }
     }
 }

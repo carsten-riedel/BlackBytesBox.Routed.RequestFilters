@@ -55,6 +55,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             builder.Services.AddAcceptLanguageFilteringMiddleware(builder.Configuration);
             builder.Services.AddSegmentFilteringMiddleware(builder.Configuration);
             builder.Services.AddPathDeepFilteringMiddleware(builder.Configuration);
+            builder.Services.AddFailurePointsFilteringMiddleware(builder.Configuration);
 
 
             // Build the application.
@@ -73,6 +74,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             app.UseAcceptLanguageFilteringMiddleware();
             app.UseSegmentFilteringMiddleware(); 
             app.UsePathDeepFilteringMiddleware();
+            app.UseFailurePointsFilteringMiddleware();
 
 
             // Map a simple GET endpoint for testing.

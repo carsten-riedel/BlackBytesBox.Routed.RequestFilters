@@ -66,7 +66,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             }
 
             // Retrieve the failure summary for the client's IP.
-            var currentFailurePointsx = await _middlewareFailurePointService.GetSummaryBySourceAsync(requestIp);
+            //var currentFailurePointsx = await _middlewareFailurePointService.GetSummaryBySourceAsync(requestIp);
             MiddlewareFailurePointService.FailureSummaryByIp currentFailurePoints =  await _middlewareFailurePointService.GetSummaryByIPAsync(requestIp);
 
             bool isAllowed = false;
@@ -80,6 +80,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             {
                 _logger.LogDebug("Request from IP: '{RequestIp}' is allowed. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints?.FailurePoint ?? 0);
                 await _nextMiddleware(context);
+                return;
             }
             else
             {
@@ -87,11 +88,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 {
                     _logger.LogDebug("Request from IP: '{RequestIp}' exceeded failure limit, but processing will continue as configured. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints?.FailurePoint ?? 0);
                     await _nextMiddleware(context);
+                    return;
                 }
                 else
                 {
                     _logger.LogDebug("Request from IP: '{RequestIp}' is blocked due to exceeding the failure limit. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints?.FailurePoint ?? 0);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
+                    return;
                 }
             }
         }

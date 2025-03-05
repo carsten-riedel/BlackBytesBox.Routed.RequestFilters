@@ -97,8 +97,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
         [TestInitialize]
         public void TestInit()
         {
+            // Create an HttpClientHandler that accepts any certificate.
+            var handler = new HttpClientHandler
+            {
+                // Accept all certificates (this is unsafe for production!)
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+                // Alternatively, you can use:
+                // ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
             // Create a new, independent HttpClient for each test.
-            client = new HttpClient
+            client = new HttpClient(handler)
             {
                 BaseAddress = new Uri("https://localhost:5425"),
                 DefaultRequestVersion = HttpVersion.Version11, // Force HTTP/1.0

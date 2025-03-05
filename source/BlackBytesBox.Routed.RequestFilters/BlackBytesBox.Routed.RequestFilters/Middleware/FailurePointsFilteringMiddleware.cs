@@ -66,25 +66,31 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             }
 
             // Retrieve the failure summary for the client's IP.
+            var currentFailurePointsx = await _middlewareFailurePointService.GetSummaryBySourceAsync(requestIp);
             MiddlewareFailurePointService.FailureSummaryByIp currentFailurePoints =  await _middlewareFailurePointService.GetSummaryByIPAsync(requestIp);
 
-            bool isAllowed = (currentFailurePoints.FailurePoint <= options.FailurePointsLimit);
+            bool isAllowed = false;
+            if (currentFailurePoints == null || (currentFailurePoints.FailurePoint <= options.FailurePointsLimit))
+            {
+                isAllowed = true;
+            }
+
 
             if (isAllowed)
             {
-                _logger.LogDebug("Request from IP: '{RequestIp}' is allowed. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints.FailurePoint);
+                _logger.LogDebug("Request from IP: '{RequestIp}' is allowed. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints?.FailurePoint ?? 0);
                 await _nextMiddleware(context);
             }
             else
             {
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request from IP: '{RequestIp}' exceeded failure limit, but processing will continue as configured. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints.FailurePoint);
+                    _logger.LogDebug("Request from IP: '{RequestIp}' exceeded failure limit, but processing will continue as configured. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints?.FailurePoint ?? 0);
                     await _nextMiddleware(context);
                 }
                 else
                 {
-                    _logger.LogDebug("Request from IP: '{RequestIp}' is blocked due to exceeding the failure limit. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints.FailurePoint);
+                    _logger.LogDebug("Request from IP: '{RequestIp}' is blocked due to exceeding the failure limit. Current failure point: {FailurePoint}.", requestIp, currentFailurePoints?.FailurePoint ?? 0);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                 }
             }

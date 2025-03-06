@@ -111,7 +111,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Allow the request if any header explicitly matches the whitelist.
             if (allowedCount > 0)
             {
-                _logger.LogDebug("Request allowed: {AllowedCount} header(s) matched whitelisted patterns, e.g. '{Header}'.", allowedCount, firstAllowedHeader);
+                _logger.LogDebug("Allowed: {AllowedCount} header(s) matched whitelisted patterns, e.g. '{Header}'.", allowedCount, firstAllowedHeader);
                 await _nextMiddleware(context);
                 return;
             }

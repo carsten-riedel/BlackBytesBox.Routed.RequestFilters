@@ -106,7 +106,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
         /// </remarks>
         public async Task AddOrUpdateFailurePointAsync(string requestIp, string failureSource, int failurePoint, DateTime requestedTime)
         {
-            _logger.LogDebug("RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}", requestIp, failureSource, failurePoint, requestedTime);
+            //_logger.LogDebug("RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}", requestIp, failureSource, failurePoint, requestedTime);
 
             // Update the failure summary by source for the given requestIp key.
             await _summaryBySource.UpdateAsync(requestIp, list =>

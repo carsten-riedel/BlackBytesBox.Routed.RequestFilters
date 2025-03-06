@@ -93,7 +93,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("RequestUrl: '{Request}' is permitted.", uriPath);
+                _logger.LogDebug("Allowed: requestUrl '{Request}'.", uriPath);
                 await _nextMiddleware(context);
                 return;
             }
@@ -115,13 +115,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Criteria not met in {MiddlewareName}; continue as configured.", nameof(RequestUrlFilteringMiddleware));
+                    _logger.LogDebug("Disallowed requestUrl '{Request}' - continuing.", uriPath);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("RequestUrl: '{Request}' is not allowed.", uriPath);
+                    _logger.LogDebug("Disallowed requestUrl '{Request}' - aborting.", uriPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

@@ -79,13 +79,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("{Middleware}: disallowed protocol '{Protocol}' - continuing.", nameof(HttpProtocolFilteringMiddleware), protocol);
+                    _logger.LogDebug("Disallowed: protocol '{Protocol}' - continuing.", protocol);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("{Middleware}: disallowed protocol '{Protocol}' - aborting.", nameof(HttpProtocolFilteringMiddleware), protocol);
+                    _logger.LogDebug("Disallowed protocol '{Protocol}' - aborting.", protocol);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

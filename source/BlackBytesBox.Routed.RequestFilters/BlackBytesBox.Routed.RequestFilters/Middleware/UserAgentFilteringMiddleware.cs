@@ -57,7 +57,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("User-Agent '{UserAgent}' is permitted.", userAgentHeader);
+                _logger.LogDebug("Allowed: User-Agent '{UserAgent}'.", userAgentHeader);
                 await _nextMiddleware(context);
                 return;
             }
@@ -79,13 +79,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("User-Agent '{UserAgent}' not allowed in {MiddlewareName}; continuing.", userAgentHeader, nameof(UserAgentFilteringMiddleware));
+                    _logger.LogDebug("Disallowed User-Agent '{UserAgent}' - continuing.", userAgentHeader);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("User-Agent '{UserAgent}' is not permitted. Responding with status code {StatusCode}.", userAgentHeader, options.DisallowedStatusCode);
+                    _logger.LogDebug("Disallowed User-Agent '{UserAgent}' - aborting.", userAgentHeader);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

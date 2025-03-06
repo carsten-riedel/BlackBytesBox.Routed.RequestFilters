@@ -79,13 +79,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("{Middleware}: disallowed host '{Host}' - continuing.", nameof(HostNameFilteringMiddleware), host.Host);
+                    _logger.LogDebug("Disallowed host '{Host}' - continuing.", host.Host);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("{Middleware}: disallowed host '{Host}' - aborting.", nameof(HostNameFilteringMiddleware), host.Host);
+                    _logger.LogDebug("Disallowed host '{Host}' - aborting.", host.Host);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

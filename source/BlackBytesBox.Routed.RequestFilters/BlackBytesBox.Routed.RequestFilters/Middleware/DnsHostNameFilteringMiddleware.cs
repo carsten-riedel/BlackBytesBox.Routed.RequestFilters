@@ -87,13 +87,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("{Middleware}: disallowed DNS host '{DnsHost}' - continuing.", nameof(DnsHostNameFilteringMiddleware), resolvedDnsName);
+                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - continuing.",resolvedDnsName);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("{Middleware}: disallowed DNS host '{DnsHost}' - aborting.", nameof(DnsHostNameFilteringMiddleware), resolvedDnsName);
+                    _logger.LogDebug("Disallowed DNS host '{DnsHost}' - aborting.",resolvedDnsName);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

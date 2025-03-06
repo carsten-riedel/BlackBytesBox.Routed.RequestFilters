@@ -81,13 +81,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("{Middleware}: disallowed depth {Depth} on {Path} - continuing.", nameof(PathDeepFilteringMiddleware), pathDepth, requestPath);
+                    _logger.LogDebug("Disallowed: depth {Depth} on {Path} - continuing.", pathDepth, requestPath);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("{Middleware}: disallowed depth {Depth} on {Path} - aborting.", nameof(PathDeepFilteringMiddleware), pathDepth, requestPath);
+                    _logger.LogDebug("Disallowed depth {Depth} on {Path} - aborting.", pathDepth, requestPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

@@ -83,13 +83,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("{Middleware}: disallowed Accept-Language '{Lang}' - continuing.", nameof(AcceptLanguageFilteringMiddleware), languageHeader);
+                    _logger.LogDebug("Disallowed: Accept-Language '{Lang}' - continuing.",languageHeader);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("{Middleware}: disallowed Accept-Language '{Lang}' - aborting.", nameof(AcceptLanguageFilteringMiddleware), languageHeader);
+                    _logger.LogDebug("Disallowed: Accept-Language '{Lang}' - aborting.", languageHeader);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

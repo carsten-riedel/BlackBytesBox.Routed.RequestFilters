@@ -133,7 +133,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(SegmentFilteringMiddleware));
+                    _logger.LogDebug("Segment e.g. '{Segment}' not allowed in {MiddlewareName}; continuing.", firstBlacklistedSegment, nameof(SegmentFilteringMiddleware));
                     await _nextMiddleware(context);
                     return;
                 }

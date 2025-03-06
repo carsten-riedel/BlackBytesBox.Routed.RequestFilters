@@ -79,7 +79,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet User-Agent criteria in {MiddlewareName}, but processing will continue as configured.", nameof(UserAgentFilteringMiddleware));
+                    _logger.LogDebug("User-Agent '{UserAgent}' not allowed in {MiddlewareName}; continuing.", userAgentHeader, nameof(UserAgentFilteringMiddleware));
                     await _nextMiddleware(context);
                     return;
                 }

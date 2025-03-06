@@ -23,7 +23,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         private readonly MiddlewareFailurePointService _middlewareFailurePointService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HostNameFilteringMiddleware"/> class.
+        /// Initializes a new instance of the <see cref="PathDeepFilteringMiddleware"/> class.
         /// </summary>
         /// <param name="nextMiddleware">The next middleware in the pipeline.</param>
         /// <param name="logger">The logger instance.</param>
@@ -38,7 +38,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(PathDeepFilteringMiddlewareOptions));
+                _logger.LogDebug("Config updated: {Options}", nameof(PathDeepFilteringMiddlewareOptions));
             });
         }
 
@@ -57,10 +57,9 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             var isAllowed = options.PathDeepLimit >= pathDepth;
 
-            // If the path depth is within allowed limits, continue processing.
             if (isAllowed)
             {
-                _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is allowed for request path {requestPath}.", pathDepth, requestPath);
+                _logger.LogDebug("Allowed: depth {Depth} on {Path}.", pathDepth, requestPath);
                 await _nextMiddleware(context);
                 return;
             }
@@ -69,7 +68,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 string? requestIp = context.Connection.RemoteIpAddress?.ToString();
                 if (string.IsNullOrEmpty(requestIp))
                 {
-                    _logger.LogError("Request rejected: Missing valid IP address for request path {requestPath}.", requestPath);
+                    _logger.LogError("Rejected: no IP for {Path}.", requestPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
                     return;
                 }
@@ -82,13 +81,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName} for request path {requestPath}, but processing will continue as configured.", nameof(PathDeepFilteringMiddleware), requestPath);
+                    _logger.LogDebug("{Middleware}: disallowed depth {Depth} on {Path} - continuing.", nameof(PathDeepFilteringMiddleware), pathDepth, requestPath);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is not allowed for request path {requestPath}.", pathDepth, requestPath);
+                    _logger.LogDebug("{Middleware}: disallowed depth {Depth} on {Path} - aborting.", nameof(PathDeepFilteringMiddleware), pathDepth, requestPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }
@@ -97,7 +96,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
         private int CalculatePathDepth(string path)
         {
-            var normalizedPath =path.TrimSpecific('/', 1, 1);
+            var normalizedPath = path.TrimSpecific('/', 1, 1);
             if (String.IsNullOrEmpty(normalizedPath))
             {
                 return 0;

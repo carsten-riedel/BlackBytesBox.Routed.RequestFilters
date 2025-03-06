@@ -106,7 +106,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
         /// </remarks>
         public async Task AddOrUpdateFailurePointAsync(string requestIp, string failureSource, int failurePoint, DateTime requestedTime)
         {
-            _logger.LogInformation("RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}", requestIp, failureSource, failurePoint, requestedTime);
+            _logger.LogDebug("RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}", requestIp, failureSource, failurePoint, requestedTime);
 
             // Update the failure summary by source for the given requestIp key.
             await _summaryBySource.UpdateAsync(requestIp, list =>
@@ -125,7 +125,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
                     item.FailurePoint += failurePoint;
                 }
                 // Single logging call that covers both cases.
-                _logger.LogDebug("Failure summary for Source {Source} on RequestIp {RequestIp}. FailurePoint {FailurePoint}.", failureSource, requestIp, item.FailurePoint);
             });
 
             // Update the failure summary by IP for the given requestIp key.
@@ -133,7 +132,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
             {
                 current ??= new FailureSummaryByIp(0);
                 current.FailurePoint += failurePoint;
-                _logger.LogDebug("Failure summary for Ip {RequestIp}. FailurePoint: {FailurePoint}.", requestIp, current.FailurePoint);
                 return current;
             });
         }

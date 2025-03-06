@@ -38,7 +38,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(HttpProtocolFilteringMiddlewareOptions));
+                _logger.LogDebug("Config updated: {Options}", nameof(HttpProtocolFilteringMiddlewareOptions));
             });
         }
 
@@ -57,7 +57,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("HTTP protocol '{Protocol}' is permitted.", protocol);
+                _logger.LogDebug("Allowed: protocol '{Protocol}'.", protocol);
                 await _nextMiddleware(context);
                 return;
             }
@@ -66,7 +66,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 string? requestIp = context.Connection.RemoteIpAddress?.ToString();
                 if (string.IsNullOrEmpty(requestIp))
                 {
-                    _logger.LogError("Request rejected: Missing valid IP address.");
+                    _logger.LogError("Rejected: no IP for protocol '{Protocol}'.", protocol);
                     await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
                     return;
                 }
@@ -79,13 +79,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(HttpProtocolFilteringMiddleware));
+                    _logger.LogDebug("{Middleware}: disallowed protocol '{Protocol}' - continuing.", nameof(HttpProtocolFilteringMiddleware), protocol);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("HTTP protocol '{Protocol}' is not permitted. Responding with status code {StatusCode}.", protocol, options.DisallowedStatusCode);
+                    _logger.LogDebug("{Middleware}: disallowed protocol '{Protocol}' - aborting.", nameof(HttpProtocolFilteringMiddleware), protocol);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

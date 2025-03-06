@@ -115,7 +115,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet criteria in {MiddlewareName}, but processing will continue as configured.", nameof(RequestUrlFilteringMiddleware));
+                    _logger.LogDebug("Criteria not met in {MiddlewareName}; continue as configured.", nameof(RequestUrlFilteringMiddleware));
                     await _nextMiddleware(context);
                     return;
                 }

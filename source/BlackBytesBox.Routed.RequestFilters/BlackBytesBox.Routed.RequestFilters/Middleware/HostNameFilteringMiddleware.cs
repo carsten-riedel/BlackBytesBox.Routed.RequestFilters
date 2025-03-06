@@ -39,7 +39,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(HostNameFilteringMiddlewareOptions));
+                _logger.LogDebug("Config updated: {Options}", nameof(HostNameFilteringMiddlewareOptions));
             });
         }
 
@@ -54,11 +54,10 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
             var host = context.Request.Host;
 
-            var isAllowed = host.Host.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
-            // Check if the request host matches any allowed host (including wildcards)
+            bool isAllowed = host.Host.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
             if (isAllowed)
             {
-                _logger.LogDebug("Request host: '{RequestHost}' is allowed.", host.Host);
+                _logger.LogDebug("Allowed: host '{Host}'.", host.Host);
                 await _nextMiddleware(context);
                 return;
             }
@@ -67,7 +66,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 string? requestIp = context.Connection.RemoteIpAddress?.ToString();
                 if (string.IsNullOrEmpty(requestIp))
                 {
-                    _logger.LogError("Request rejected: Missing valid IP address.");
+                    _logger.LogError("Rejected: no IP for host '{Host}'.", host.Host);
                     await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
                     return;
                 }
@@ -80,13 +79,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(HostNameFilteringMiddleware));
+                    _logger.LogDebug("{Middleware}: disallowed host '{Host}' - continuing.", nameof(HostNameFilteringMiddleware), host.Host);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Request host: '{RequestHost}' is not allowed.", host.Host);
+                    _logger.LogDebug("{Middleware}: disallowed host '{Host}' - aborting.", nameof(HostNameFilteringMiddleware), host.Host);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

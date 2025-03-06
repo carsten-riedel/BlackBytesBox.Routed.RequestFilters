@@ -42,7 +42,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("HeaderPresentsFilteringMiddleware configuration has been updated.");
+                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(HeaderPresentsFilteringMiddlewareOptions));
             });
         }
 

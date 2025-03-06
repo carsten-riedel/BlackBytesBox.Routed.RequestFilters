@@ -94,24 +94,42 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
         /// <param name="failurePoint">The number of points to add.</param>
         /// <param name="requestedTime">The timestamp when the failure occurred.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
+        /// <summary>
+        /// Adds or updates the failure point for a given request IP, both by source and overall.
+        /// </summary>
+        /// <param name="requestIp">The IP address from which the request originated.</param>
+        /// <param name="failureSource">The source of the failure.</param>
+        /// <param name="failurePoint">The number of failure points to add.</param>
+        /// <param name="requestedTime">The time when the request was made.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>
+        /// This method logs an information level message with the request details and then updates two separate failure summaries.
+        /// The failure summary by source is updated with a single debug log after either creating or updating the summary.
+        /// </remarks>
         public async Task AddOrUpdateFailurePointAsync(string requestIp, string failureSource, int failurePoint, DateTime requestedTime)
         {
-            _logger.LogInformation("AddOrUpdateFailurePointAsync started for RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}", requestIp, failureSource, failurePoint, requestedTime);
+            _logger.LogInformation(
+                "RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}",
+                requestIp, failureSource, failurePoint, requestedTime);
 
             // Update the failure summary by source for the given requestIp key.
             await _summaryBySource.UpdateAsync(requestIp, list =>
             {
+                // Find the existing summary by source.
                 var item = list.FirstOrDefault(e => e.FailureSource == failureSource);
                 if (item == null)
                 {
-                    list.Add(new FailureSummaryBySource(failureSource, failurePoint));
-                    _logger.LogDebug("Created new failure summary for Source {Source} on RequestIp {RequestIp} with initial FailurePoint {FailurePoint}.", failureSource, requestIp, failurePoint);
+                    // Create and add a new summary if it does not exist.
+                    item = new FailureSummaryBySource(failureSource, failurePoint);
+                    list.Add(item);
                 }
                 else
                 {
+                    // Otherwise, update the existing summary.
                     item.FailurePoint += failurePoint;
-                    _logger.LogDebug("Updated failure summary for Source {Source} on RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.", failureSource, requestIp, item.FailurePoint);
                 }
+                // Single logging call that covers both cases.
+                _logger.LogDebug("Failure summary for Source {Source} on RequestIp {RequestIp}. FailurePoint {FailurePoint}.", failureSource, requestIp, item.FailurePoint);
             });
 
             // Update the failure summary by IP for the given requestIp key.
@@ -119,10 +137,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
             {
                 current ??= new FailureSummaryByIp(0);
                 current.FailurePoint += failurePoint;
-                _logger.LogDebug("Updated failure summary for RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.", requestIp, current.FailurePoint);
+                _logger.LogDebug("Failure summary for Ip {RequestIp}. FailurePoint: {FailurePoint}.", requestIp, current.FailurePoint);
                 return current;
             });
         }
+
 
         public async Task<IReadOnlyList<FailureSummaryBySource>> GetSummaryBySourceAsync(string requestIp)
         {

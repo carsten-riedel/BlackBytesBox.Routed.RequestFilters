@@ -53,15 +53,14 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
 
             var requestPath = context.Request.Path.ToString();
-            _logger.LogDebug("RequestPath {path}", context.Request.Path);
             var pathDepth = CalculatePathDepth(requestPath);
 
             var isAllowed = options.PathDeepLimit >= pathDepth;
 
-            // Check if the request host matches any allowed host (including wildcards)
+            // If the path depth is within allowed limits, continue processing.
             if (isAllowed)
             {
-                _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is allowed.", pathDepth);
+                _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is allowed for request path {requestPath}.", pathDepth, requestPath);
                 await _nextMiddleware(context);
                 return;
             }
@@ -70,7 +69,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 string? requestIp = context.Connection.RemoteIpAddress?.ToString();
                 if (string.IsNullOrEmpty(requestIp))
                 {
-                    _logger.LogError("Request rejected: Missing valid IP address.");
+                    _logger.LogError("Request rejected: Missing valid IP address for request path {requestPath}.", requestPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
                     return;
                 }
@@ -83,13 +82,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(PathDeepFilteringMiddleware));
+                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName} for request path {requestPath}, but processing will continue as configured.", nameof(PathDeepFilteringMiddleware), requestPath);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is not allowed.", pathDepth);
+                    _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is not allowed for request path {requestPath}.", pathDepth, requestPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

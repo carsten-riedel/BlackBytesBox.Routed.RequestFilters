@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
+using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
+using BlackBytesBox.Routed.RequestFilters.Services;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System;
-using BlackBytesBox.Routed.RequestFilters.Services;
-using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
-using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
-using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
-using System.Linq;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -29,11 +31,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="logger">The logger instance used to record events.</param>
         /// <param name="optionsMonitor">The monitor providing middleware configuration options.</param>
         /// <param name="middlewareFailurePointService">The service used for tracking failure metrics.</param>
-        public HeaderPresentsFilteringMiddleware(
-            RequestDelegate nextMiddleware,
-            ILogger<HeaderPresentsFilteringMiddleware> logger,
-            IOptionsMonitor<HeaderPresentsFilteringMiddlewareOptions> optionsMonitor,
-            MiddlewareFailurePointService middlewareFailurePointService)
+        public HeaderPresentsFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<HeaderPresentsFilteringMiddleware> logger, IOptionsMonitor<HeaderPresentsFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;

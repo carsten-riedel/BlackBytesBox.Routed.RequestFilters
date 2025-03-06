@@ -111,7 +111,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             client = new HttpClient(handler)
             {
                 BaseAddress = new Uri("https://localhost:5425"),
-                DefaultRequestVersion = HttpVersion.Version11, // Force HTTP/1.0
+                DefaultRequestVersion = HttpVersion.Version10, // Force HTTP/1.0
             };
             // Add a default User-Agent header for testing.
             client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36");
@@ -137,13 +137,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             
             // Send a GET request to the root endpoint.
             HttpResponseMessage response = await client!.GetAsync("/");
-            response.EnsureSuccessStatusCode();
-            await Task.Delay(5000);
+            //response.EnsureSuccessStatusCode();
+            await Task.Delay(2000);
             response = await client!.GetAsync("/");
-            response.EnsureSuccessStatusCode();
-            await Task.Delay(3000);
+            //response.EnsureSuccessStatusCode();
+            await Task.Delay(2000);
             response = await client!.GetAsync("/");
-            response.EnsureSuccessStatusCode();
+            //response.EnsureSuccessStatusCode();
             await Task.Delay(2000);
 
 

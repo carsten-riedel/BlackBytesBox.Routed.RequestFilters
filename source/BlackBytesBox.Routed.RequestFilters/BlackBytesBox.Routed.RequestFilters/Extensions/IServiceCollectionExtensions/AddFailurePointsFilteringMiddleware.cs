@@ -111,6 +111,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         {
             return services.AddFailurePointsFilteringMiddleware(configuration =>
             {
+                configuration.DumpFilePath = System.IO.Path.Combine(AppContext.BaseDirectory, "FailurePointsFilteringMiddleware.json");
                 configuration.FailurePointsLimit = 0;
                 configuration.DisallowedStatusCode = 400;
                 configuration.ContinueOnDisallowed = false;

@@ -13,17 +13,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions
         {
             response.StatusCode = StatusCode;
             response.ContentType = "text/html";
-
-            // Adding additional headers
-            //response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
-            //response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self'; object-src 'none';");
-            //response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
-            //response.Headers.Add("X-Content-Type-Options", "nosniff");
-            //response.Headers.Add("Referrer-Policy", "no-referrer");
-            //response.Headers.Add("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), sync-xhr=(), usb=(), vr=(), xr-spatial-tracking=()");
-            //response.Headers.Add("Expect-CT", "max-age=86400, enforce");
-            //response.Headers.Add("Feature-Policy", "geolocation 'none'; microphone 'none'; camera 'none'");
-
             string responseMessage = $"<html><body><h1><p>{response.StatusCode} - {GetStatusCodeDescription(response.StatusCode)}</p></h1></body></html>";
             await response.WriteAsync(responseMessage);
         }

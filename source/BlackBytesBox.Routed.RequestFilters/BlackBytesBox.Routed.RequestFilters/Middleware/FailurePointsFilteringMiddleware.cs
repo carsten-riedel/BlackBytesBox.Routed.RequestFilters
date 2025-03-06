@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Services;
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -31,7 +33,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="middlewareFailurePointService">
         /// The service used for tracking and recording failure points when requests do not meet the configured criteria.
         /// </param>
-        public FailurePointsFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<FailurePointsFilteringMiddleware> logger,  IOptionsMonitor<FailurePointsFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
+        public FailurePointsFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<FailurePointsFilteringMiddleware> logger,  IOptionsMonitor<FailurePointsFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService, IHostApplicationLifetime hostApplicationLifetime)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;
@@ -41,6 +43,53 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             _optionsMonitor.OnChange(updatedOptions =>
             {
                 _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(FailurePointsFilteringMiddlewareOptions));
+            });
+
+
+            // Register a callback to load persisted data when the host starts.
+            hostApplicationLifetime.ApplicationStarted.Register(() =>
+            {
+                try
+                {
+                    var loadTask = _middlewareFailurePointService.LoadDataFromJsonAsync(_optionsMonitor.CurrentValue.DumpFilePath);
+                    bool loadedInTime = loadTask.Wait(TimeSpan.FromSeconds(10));
+                    if (!loadedInTime)
+                    {
+                        _logger.LogWarning("Loading persisted data did not complete within the 10-second timeout. Continuing without full data restoration.");
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Successfully loaded persisted data during application startup.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error loading persisted data during application startup.");
+                }
+            });
+
+            // Register an asynchronous callback when the host starts.
+            // Register a callback to dump all data when the application is stopping.
+            hostApplicationLifetime.ApplicationStopping.Register(() =>
+            {
+                try
+                {
+                    // Start the dump operation and wait synchronously for up to 10 seconds.
+                    var dumpTask = _middlewareFailurePointService.DumpDataToJsonAsync(_optionsMonitor.CurrentValue.DumpFilePath);
+                    bool completedInTime = dumpTask.Wait(TimeSpan.FromSeconds(10));
+                    if (!completedInTime)
+                    {
+                        _logger.LogWarning("Dumping data did not complete within the 10-second timeout. Proceeding with shutdown.");
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Successfully dumped all data during application shutdown.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error dumping data during application shutdown.");
+                }
             });
         }
 
@@ -74,7 +123,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             {
                 isAllowed = true;
             }
-
 
             if (isAllowed)
             {

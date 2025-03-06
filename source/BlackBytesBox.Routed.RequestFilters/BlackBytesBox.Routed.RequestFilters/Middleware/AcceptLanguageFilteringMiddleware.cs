@@ -33,11 +33,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="middlewareFailurePointService">
         /// The service used for tracking and recording failure points when requests do not meet configured criteria.
         /// </param>
-        public AcceptLanguageFilteringMiddleware(
-            RequestDelegate nextMiddleware,
-            ILogger<AcceptLanguageFilteringMiddleware> logger,
-            IOptionsMonitor<AcceptLanguageFilteringMiddlewareOptions> optionsMonitor,
-            MiddlewareFailurePointService middlewareFailurePointService)
+        public AcceptLanguageFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<AcceptLanguageFilteringMiddleware> logger, IOptionsMonitor<AcceptLanguageFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;

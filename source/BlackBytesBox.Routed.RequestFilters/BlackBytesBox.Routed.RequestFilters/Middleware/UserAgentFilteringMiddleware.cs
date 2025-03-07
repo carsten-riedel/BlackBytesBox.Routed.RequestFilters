@@ -79,13 +79,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Disallowed User-Agent '{UserAgent}' - continuing.", userAgentHeader);
+                    _logger.LogDebug("Disallowed: User-Agent '{UserAgent}' - continuing.", userAgentHeader);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Disallowed User-Agent '{UserAgent}' - aborting.", userAgentHeader);
+                    _logger.LogDebug("Disallowed: User-Agent '{UserAgent}' - aborting.", userAgentHeader);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

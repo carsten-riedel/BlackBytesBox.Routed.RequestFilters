@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;

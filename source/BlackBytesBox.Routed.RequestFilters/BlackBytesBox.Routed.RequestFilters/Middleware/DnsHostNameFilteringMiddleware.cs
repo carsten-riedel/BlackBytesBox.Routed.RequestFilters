@@ -93,7 +93,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 }
                 else
                 {
-                    _logger.LogDebug("Disallowed DNS host '{DnsHost}' - aborting.",resolvedDnsName);
+                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - aborting.",resolvedDnsName);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

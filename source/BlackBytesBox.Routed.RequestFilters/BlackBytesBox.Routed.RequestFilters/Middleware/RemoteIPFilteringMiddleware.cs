@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
@@ -16,21 +16,21 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
     /// <summary>
     /// Middleware that filters HTTP requests based on their protocol against configured allowed protocols.
     /// </summary>
-    public class HostNameFilteringMiddleware
+    public class RemoteIPFilteringMiddleware
     {
         private readonly RequestDelegate _nextMiddleware;
-        private readonly ILogger<HostNameFilteringMiddleware> _logger;
-        private readonly IOptionsMonitor<HostNameFilteringMiddlewareOptions> _optionsMonitor;
+        private readonly ILogger<RemoteIPFilteringMiddleware> _logger;
+        private readonly IOptionsMonitor<RemoteIPFilteringMiddlewareOptions> _optionsMonitor;
         private readonly MiddlewareFailurePointService _middlewareFailurePointService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HostNameFilteringMiddleware"/> class.
+        /// Initializes a new instance of the <see cref="HttpProtocolFilteringMiddleware"/> class.
         /// </summary>
         /// <param name="nextMiddleware">The next middleware in the pipeline.</param>
         /// <param name="logger">The logger instance.</param>
         /// <param name="optionsMonitor">The options monitor for the middleware configuration.</param>
         /// <param name="middlewareFailurePointService">The service used for tracking failure points.</param>
-        public HostNameFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<HostNameFilteringMiddleware> logger, IOptionsMonitor<HostNameFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
+        public RemoteIPFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<RemoteIPFilteringMiddleware> logger, IOptionsMonitor<RemoteIPFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;
@@ -39,7 +39,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Config updated: {Options}", nameof(HostNameFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(RemoteIPFilteringMiddlewareOptions));
             });
         }
 
@@ -52,44 +52,52 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var options = _optionsMonitor.CurrentValue;
-            var host = context.Request.Host;
 
-            bool isAllowed = host.Host.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
+            System.Net.IPAddress? remoteIpAddress = context.Connection.RemoteIpAddress;
+            if (remoteIpAddress == null)
+            {
+                _logger.LogError("Request rejected: Missing valid IP address.");
+                await context.Response.WriteDefaultStatusCodeAnswer(_optionsMonitor.CurrentValue.DisallowedStatusCode);
+                return;
+            }
+
+            string remoteIpAddressStr = remoteIpAddress.ToString();
+
+            bool isAllowed = remoteIpAddressStr.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
+            
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: host '{Host}'.", host.Host);
+                _logger.LogDebug("Allowed: RemoteIpAddress '{Protocol}'.", remoteIpAddressStr);
+                context.SetProperty<string>(remoteIpAddressStr);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Rejected: no IP for host '{Host}'.", host.Host);
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
-                    nameof(HostNameFilteringMiddleware),
+                    remoteIpAddressStr,
+                    nameof(RemoteIPFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Disallowed: host '{Host}' - continuing.", host.Host);
+                    _logger.LogDebug("Disallowed: RemoteIpAddress '{RemoteIpAddress}' - continuing.", remoteIpAddressStr);
+                    context.SetProperty<string>(remoteIpAddressStr);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Disallowed: host '{Host}' - aborting.", host.Host);
+                    _logger.LogDebug("Disallowed: RemoteIpAddress '{RemoteIpAddress}' - aborting.", remoteIpAddressStr);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }
             }
+
+
+
+
         }
     }
 }

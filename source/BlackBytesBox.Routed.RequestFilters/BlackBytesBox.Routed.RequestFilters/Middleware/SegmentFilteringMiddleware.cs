@@ -116,7 +116,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Decision logic: Block if any segment is blacklisted.
             if (blacklistedCount > 0)
             {
-                _logger.LogDebug("Request blocked: {BlacklistedCount} segment(s) matched blacklisted patterns, e.g. '{Segment}'.", blacklistedCount, firstBlacklistedSegment);
                 string? requestIp = context.Connection.RemoteIpAddress?.ToString();
                 if (string.IsNullOrEmpty(requestIp))
                 {
@@ -133,12 +132,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Segment e.g. '{Segment}' not allowed in {MiddlewareName}; continuing.", firstBlacklistedSegment, nameof(SegmentFilteringMiddleware));
+                    _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - continuing.", blacklistedCount, firstBlacklistedSegment);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
+                    _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - aborting.", blacklistedCount, firstBlacklistedSegment);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }
@@ -147,13 +147,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Allow the request if at least one segment explicitly matches the whitelist.
             if (allowedCount > 0)
             {
-                _logger.LogDebug("Request allowed: {AllowedCount} segment(s) matched whitelisted patterns, e.g. '{Segment}'.", allowedCount, firstAllowedSegment);
+                _logger.LogDebug("Allowed: Segment {AllowedCount} segment(s) matched patterns, e.g. '{Segment}'. - continuing.", allowedCount, firstAllowedSegment);
                 await _nextMiddleware(context);
                 return;
             }
 
             // If no segment qualifies, deny the request.
-            _logger.LogDebug("Request denied: No segment matched the allowed patterns.");
+            _logger.LogDebug("Disallowed: Segment no allowed or disallowed patterns.- aborting.");
             await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
         }
 

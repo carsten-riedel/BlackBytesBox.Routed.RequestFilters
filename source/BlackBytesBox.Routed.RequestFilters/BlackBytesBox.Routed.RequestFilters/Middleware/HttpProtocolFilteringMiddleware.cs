@@ -85,7 +85,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 }
                 else
                 {
-                    _logger.LogDebug("Disallowed protocol '{Protocol}' - aborting.", protocol);
+                    _logger.LogDebug("Disallowed: protocol '{Protocol}' - aborting.", protocol);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

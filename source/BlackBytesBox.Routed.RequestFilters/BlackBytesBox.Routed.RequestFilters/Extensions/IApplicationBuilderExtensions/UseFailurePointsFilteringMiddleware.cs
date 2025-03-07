@@ -23,6 +23,14 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         public static IApplicationBuilder UseFailurePointsFilteringMiddleware(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
+
+            // Check if the RemoteIPFilteringMiddleware has already been added.
+            if (!app.GetProperty<RemoteIPFilteringMiddleware, bool>())
+            {
+                app.SetProperty<RemoteIPFilteringMiddleware, bool>(true);
+                app.UseMiddleware<RemoteIPFilteringMiddleware>();
+            }
+
             return app.UseMiddleware<FailurePointsFilteringMiddleware>();
         }
 
@@ -50,6 +58,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
 
             // Wrap it with our decorator so that additionalConfigure is applied on each access.
             var decoratedOptionsMonitor = new ConfiguredOptionsMonitor<FailurePointsFilteringMiddlewareOptions>(innerOptionsMonitor, additionalConfigure);
+
+            // Check if the RemoteIPFilteringMiddleware has already been added.
+            if (!app.GetProperty<RemoteIPFilteringMiddleware, bool>())
+            {
+                app.SetProperty<RemoteIPFilteringMiddleware, bool>(true);
+                app.UseMiddleware<RemoteIPFilteringMiddleware>();
+            }
 
             // The middleware's constructor accepts (RequestDelegate, IOptionsMonitor<FailurePointsFilteringMiddlewareOptions>).
             // The RequestDelegate is auto-resolved, and we supply our decoratedOptionsMonitor.

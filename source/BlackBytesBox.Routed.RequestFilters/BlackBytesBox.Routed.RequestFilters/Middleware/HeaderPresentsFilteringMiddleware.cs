@@ -97,12 +97,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(HeaderPresentsFilteringMiddleware));
+                    _logger.LogDebug("Disallowed: Headers {BlacklistedCount} no match  e.g. '{Headers}' - continuing.", blacklistedCount, firstBlacklistedHeader);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
+                    _logger.LogDebug("Disallowed: Headers {BlacklistedCount} no match  e.g. '{Headers}' - aborting.", blacklistedCount, firstBlacklistedHeader);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }
@@ -111,7 +112,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Allow the request if any header explicitly matches the whitelist.
             if (allowedCount > 0)
             {
-                _logger.LogDebug("Allowed: {AllowedCount} header(s) matched whitelisted patterns, e.g. '{Header}'.", allowedCount, firstAllowedHeader);
+                _logger.LogDebug("Allowed: Headers {AllowedCount} match  e.g. '{Headers}' - aborting.", allowedCount, firstAllowedHeader);
                 await _nextMiddleware(context);
                 return;
             }

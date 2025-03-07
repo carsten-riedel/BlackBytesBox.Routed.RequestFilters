@@ -115,13 +115,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Disallowed requestUrl '{Request}' - continuing.", uriPath);
+                    _logger.LogDebug("Disallowed: requestUrl '{Request}' - continuing.", uriPath);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Disallowed requestUrl '{Request}' - aborting.", uriPath);
+                    _logger.LogDebug("Disallowed: requestUrl '{Request}' - aborting.", uriPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

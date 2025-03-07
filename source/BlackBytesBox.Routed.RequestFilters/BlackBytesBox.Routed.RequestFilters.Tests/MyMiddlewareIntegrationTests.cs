@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions;
+using BlackBytesBox.Routed.RequestFilters.Middleware;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -44,7 +45,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
 
             //builder.Services.AddMyMiddlewareConfiguration(builder.Configuration);
 
-
+            builder.Services.AddRemoteIPFilteringMiddleware(builder.Configuration);
             builder.Services.AddHttpProtocolFilteringMiddleware(builder.Configuration);
             builder.Services.AddHostNameFilteringMiddleware(builder.Configuration);
             builder.Services.AddUserAgentFilteringMiddleware(builder.Configuration);
@@ -64,6 +65,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
 
             // Option 2: Use DI options and apply an additional manual configuration.
             // For example, override Option1 while still getting refresh behavior.
+
             app.UseHttpProtocolFilteringMiddleware();
             app.UseHostNameFilteringMiddleware();
             app.UseUserAgentFilteringMiddleware();

@@ -55,6 +55,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             builder.Services.AddAcceptLanguageFilteringMiddleware(builder.Configuration);
             builder.Services.AddSegmentFilteringMiddleware(builder.Configuration);
             builder.Services.AddPathDeepFilteringMiddleware(builder.Configuration);
+            builder.Services.AddHeaderValuesFilteringMiddleware(builder.Configuration);
             builder.Services.AddFailurePointsFilteringMiddleware(builder.Configuration);
 
 
@@ -75,6 +76,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             app.UseAcceptLanguageFilteringMiddleware();
             app.UseSegmentFilteringMiddleware(); 
             app.UsePathDeepFilteringMiddleware();
+            app.UseHeaderValuesFilteringMiddleware();
             app.UseFailurePointsFilteringMiddleware();
 
 
@@ -113,11 +115,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             client = new HttpClient(handler)
             {
                 BaseAddress = new Uri("https://localhost:5425"),
-                DefaultRequestVersion = HttpVersion.Version10, // Force HTTP/1.0
+                DefaultRequestVersion = HttpVersion.Version11, // Force HTTP/1.0
             };
             // Add a default User-Agent header for testing.
             client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36");
-            //client.DefaultRequestHeaders.Add("strangeoptions", "CustomValue");
+            client.DefaultRequestHeaders.Add("APPID", "1234");
             client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("de-DE");
         }
 

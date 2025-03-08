@@ -1,70 +1,60 @@
-﻿using System;
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions
 {
-
     /// <summary>
-    /// Provides generic extension methods for storing and retrieving properties on HttpContext.Items.
+    /// Provides extension methods for storing and retrieving items from <see cref="HttpContext.Items"/> using a string key.
     /// </summary>
-    public static class HttpContextPropertyExtensions
+    public static class HttpContextDictionaryExtensions
     {
         /// <summary>
-        /// Sets a property on the HttpContext.Items dictionary using the full name of type <typeparamref name="T"/> as the key.
+        /// Stores an object in the <see cref="HttpContext.Items"/> dictionary using the specified key.
         /// </summary>
-        /// <typeparam name="T">The type whose full name will be used as the key.</typeparam>
-        /// <typeparam name="K">The type of the value to store.</typeparam>
-        /// <param name="context">The current HttpContext.</param>
+        /// <param name="context">The current HTTP context.</param>
+        /// <param name="key">The key under which the value will be stored.</param>
         /// <param name="value">The value to store.</param>
-        public static void SetProperty<T, K>(this HttpContext context, K value)
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="context"/> or <paramref name="key"/> is <see langword="null"/>.
+        /// </exception>
+        public static void SetItem(this HttpContext context, string key, object value)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-            string key = typeof(T).FullName!;
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
             context.Items[key] = value;
         }
 
         /// <summary>
-        /// Retrieves a property from the HttpContext.Items dictionary using the full name of type <typeparamref name="T"/> as the key.
+        /// Retrieves an item of type <typeparamref name="T"/> from the <see cref="HttpContext.Items"/> dictionary using the specified key.
         /// </summary>
-        /// <typeparam name="T">The type whose full name is used as the key.</typeparam>
-        /// <typeparam name="K">The type of the value to retrieve.</typeparam>
-        /// <param name="context">The current HttpContext.</param>
-        /// <returns>The stored value if it exists; otherwise, the default value for type <typeparamref name="K"/>.</returns>
-        public static K? GetProperty<T, K>(this HttpContext context)
+        /// <typeparam name="T">The expected type of the stored value.</typeparam>
+        /// <param name="context">The current HTTP context.</param>
+        /// <param name="key">The key under which the value is stored.</param>
+        /// <returns>
+        /// The stored value cast to type <typeparamref name="T"/> if found and valid.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="context"/> or <paramref name="key"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the key does not exist in <see cref="HttpContext.Items"/> or the value cannot be cast to type <typeparamref name="T"/>.
+        /// </exception>
+        public static T GetItem<T>(this HttpContext context, string key)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-            string key = typeof(T).FullName!;
-            if (context.Items.TryGetValue(key, out var value) && value is K typedValue)
+            if (context is null)
+                throw new ArgumentNullException(nameof(context));
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
+            if (context.Items.TryGetValue(key, out var value) && value is T typedValue)
             {
                 return typedValue;
             }
-            return default;
-        }
 
-        /// <summary>
-        /// Sets a property on the HttpContext.Items dictionary using the full name of type <typeparamref name="T"/> as the key.
-        /// This overload assumes the key and value types are the same.
-        /// </summary>
-        /// <typeparam name="T">The type used both as the key (via its full name) and the value type.</typeparam>
-        /// <param name="context">The current HttpContext.</param>
-        /// <param name="value">The value to store.</param>
-        public static void SetProperty<T>(this HttpContext context, T value)
-        {
-            context.SetProperty<T, T>(value);
-        }
-
-        /// <summary>
-        /// Retrieves a property from the HttpContext.Items dictionary using the full name of type <typeparamref name="T"/> as the key.
-        /// This overload assumes the key and value types are the same.
-        /// </summary>
-        /// <typeparam name="T">The type used both as the key (via its full name) and the value type.</typeparam>
-        /// <param name="context">The current HttpContext.</param>
-        /// <returns>The stored value if it exists; otherwise, the default value for type <typeparamref name="T"/>.</returns>
-        public static T? GetProperty<T>(this HttpContext context)
-        {
-            return context.GetProperty<T, T>();
+            throw new InvalidOperationException($"No valid entry found for key '{key}' in HttpContext.Items.");
         }
     }
-
 }

@@ -68,7 +68,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             if (isAllowed)
             {
                 _logger.LogDebug("Allowed: RemoteIpAddress '{Protocol}'.", remoteIpAddressStr);
-                context.SetProperty<string>(remoteIpAddressStr);
+                context.SetItem("remoteIpAddressStr", remoteIpAddressStr);
                 await _nextMiddleware(context);
                 return;
             }
@@ -83,7 +83,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 if (options.ContinueOnDisallowed)
                 {
                     _logger.LogDebug("Disallowed: RemoteIpAddress '{RemoteIpAddress}' - continuing.", remoteIpAddressStr);
-                    context.SetProperty<string>(remoteIpAddressStr);
+                    context.Items["remoteIpAddressStr"] = remoteIpAddressStr;
                     await _nextMiddleware(context);
                     return;
                 }

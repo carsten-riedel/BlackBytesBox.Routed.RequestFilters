@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
@@ -63,16 +64,8 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             }
             else
             {
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Rejected: no IP for host '{Host}'.", host.Host);
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                    context.GetItem<string>("remoteIpAddressStr"),
                     nameof(HostNameFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);

@@ -8,6 +8,7 @@ using BlackBytesBox.Routed.RequestFilters.Services;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -50,14 +51,9 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var options = _optionsMonitor.CurrentValue;
-            string? remoteIPAddress = context.Connection.RemoteIpAddress?.ToString();
-            if (remoteIPAddress == null)
-            {
-                _logger.LogError("Rejected: no IP.");
-                await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                return;
-            }
 
+            var remoteIPAddress = context.GetItem<string>("remoteIpAddressStr");
+            
             string? resolvedDnsName = null;
             try
             {

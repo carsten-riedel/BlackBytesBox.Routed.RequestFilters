@@ -68,16 +68,8 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             }
             else
             {
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Rejected: no IP for Accept-Language '{Lang}'.", languageHeader);
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                    context.GetItem<string>("remoteIpAddressStr"),
                     nameof(AcceptLanguageFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);

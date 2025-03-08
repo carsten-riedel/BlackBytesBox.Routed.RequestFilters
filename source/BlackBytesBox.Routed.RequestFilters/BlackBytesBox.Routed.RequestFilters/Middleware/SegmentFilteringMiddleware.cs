@@ -9,6 +9,7 @@ using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
 using System.Linq;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using Microsoft.AspNetCore.Http.Extensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -116,16 +117,8 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Decision logic: Block if any segment is blacklisted.
             if (blacklistedCount > 0)
             {
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Request rejected: Unable to determine client's IP address for URI segment validation.");
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                    context.GetItem<string>("remoteIpAddressStr"),
                     nameof(SegmentFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);

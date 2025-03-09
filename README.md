@@ -2,10 +2,6 @@
 
 A collection of configurable middleware filters for ASP.NET Core applications. This library provides a set of reusable request filters that can be easily integrated into your web application's middleware pipeline.
 
-## Overview
-
-BlackBytesBox.Routed.RequestFilters contains various middleware filters that can be configured to handle HTTP requests in your ASP.NET Core applications. These filters can be used to implement common functionality such as request validation, transformation, and routing customization.
-
 ## Available Filters
 
 - **RemoteIPFilteringMiddleware**: Filters requests based on remote IP address. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.

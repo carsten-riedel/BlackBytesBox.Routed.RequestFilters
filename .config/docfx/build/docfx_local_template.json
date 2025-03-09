@@ -34,8 +34,8 @@
       "../_exported_templates/override"
     ],
     "globalMetadata": {
-      "_appName": "BlackBytesBox.Routed.Middleware",
-      "_appTitle": "BlackBytesBox.Routed.Middleware",
+      "_appName": "{{projfilebasename}}",
+      "_appTitle": "{{projfilebasename}}",
       "_appFooter": "<pre></pre>"
     }
   }

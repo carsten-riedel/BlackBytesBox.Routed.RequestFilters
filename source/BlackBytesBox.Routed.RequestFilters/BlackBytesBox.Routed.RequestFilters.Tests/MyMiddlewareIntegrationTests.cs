@@ -141,13 +141,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             
             // Send a GET request to the root endpoint.
             HttpResponseMessage response = await client!.GetAsync("/");
-            //response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
             await Task.Delay(2000);
             response = await client!.GetAsync("/");
-            //response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
             await Task.Delay(2000);
             response = await client!.GetAsync("/");
-            //response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
             await Task.Delay(2000);
 
 

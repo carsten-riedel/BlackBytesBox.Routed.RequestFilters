@@ -45,7 +45,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Stage)' == 'pack'">
-
 		<OutputPackDir Condition="'$(OutputArtifactPackDirectory)' != ''">$(OutputArtifactPackDirectory)</OutputPackDir>
 		<OutputPackDir Condition="'$(OutputArtifactPackDirectory)' == ''">$(MSBuildThisFileDirectory)bin\Output\pack\$(AssemblyName)</OutputPackDir>
 		<PackageOutputPath>$(OutputPackDir)</PackageOutputPath>
@@ -53,12 +52,12 @@
 		<Authors>Carsten Riedel</Authors>
 		<Owners>Carsten Riedel</Owners>
 		<PackageId>$(AssemblyName)</PackageId>
-		<PackageTags>dotnet;tool;BlackBytesBox;Routed;RequestFilters</PackageTags>
+		<PackageTags>aspnetcore;middleware;security;filtering;blacklist;whitelist;request-validation;ip-filtering;url-filtering;dotnet;BlackBytesBox</PackageTags>
 		<PackageProjectUrl>https://github.com/carsten-riedel/BlackBytesBox.Routed.RequestFilters</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/carsten-riedel/BlackBytesBox.Routed.RequestFilters</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<Description>
-			<![CDATA[BlackBytesBox.Routed.RequestFilters is a multi-purpose middleware.]]>
+			<![CDATA[A collection of configurable middleware filters for ASP.NET Core applications that provide comprehensive request filtering and security features. Includes filters for IP addresses, URLs, HTTP protocols, headers, and user agents with a built-in failure tracking system.]]>
 		</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -72,10 +71,7 @@
 		<None Include="$(MSBuildProjectDirectory)\AddPackageFiles\**\*" Exclude="$(MSBuildProjectDirectory)\AddPackageFiles\ReleaseNotes.txt" Pack="true" PackagePath="" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="Extensions\IApplicationBuilderExtensions\UseHeaderValuesRequiredFilteringMiddleware.cs" />
+		<None Include="Extensions\IApplicationBuilderExtensions\UseHeaderValuesRequiredFilteringMiddleware.cs" />
 	</ItemGroup>
-
-
-
 
 </Project>

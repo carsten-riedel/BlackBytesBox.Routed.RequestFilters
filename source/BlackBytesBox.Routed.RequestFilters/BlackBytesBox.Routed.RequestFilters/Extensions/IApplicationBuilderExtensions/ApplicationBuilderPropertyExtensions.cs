@@ -15,6 +15,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// <typeparam name="K">The type of the value to store.</typeparam>
         /// <param name="app">The application builder.</param>
         /// <param name="value">The value to store.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static void SetProperty<T, K>(this IApplicationBuilder app, K value)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
@@ -31,6 +32,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// <returns>
         /// The stored value if it exists; otherwise, the default value for type <typeparamref name="K"/>.
         /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static K? GetProperty<T, K>(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
@@ -49,6 +51,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// <typeparam name="T">The type used both as the key (via its full name) and the value type.</typeparam>
         /// <param name="app">The application builder.</param>
         /// <param name="value">The value to store.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static void SetProperty<T>(this IApplicationBuilder app, T value)
         {
             app.SetProperty<T, T>(value);
@@ -61,6 +64,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// <typeparam name="T">The type used both as the key (via its full name) and the value type.</typeparam>
         /// <param name="app">The application builder.</param>
         /// <returns>The stored value if it exists; otherwise, the default value for type <typeparamref name="T"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static T? GetProperty<T>(this IApplicationBuilder app)
         {
             return app.GetProperty<T, T>();

@@ -39,6 +39,32 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// using <c>TryAddSingleton</c> to avoid duplicate registrations.
         /// </para>
         /// </remarks>
+        /// <example>
+        /// Configuration in appsettings.json:
+        /// <code>
+        /// {
+        ///   "AcceptLanguageFilteringMiddlewareOptions": {
+        ///     "Whitelist": ["en-US", "en-GB", "de-DE", "fr-FR"],
+        ///     "Blacklist": ["zh-CN", "ko-KR"],
+        ///     "DisallowedStatusCode": 403,
+        ///     "DisallowedFailureRating": 5,
+        ///     "ContinueOnDisallowed": false
+        ///   }
+        /// }
+        /// </code>
+        /// 
+        /// Usage in Startup.cs or Program.cs:
+        /// <code>
+        /// builder.Services.AddAcceptLanguageFilteringMiddleware(
+        ///     builder.Configuration,
+        ///     options => 
+        ///     {
+        ///         // Override or add to configuration values
+        ///         options.DisallowedStatusCode = 400;
+        ///         options.Whitelist = options.Whitelist.Concat(new[] { "es-ES" }).ToArray();
+        ///     });
+        /// </code>
+        /// </example>
         public static IServiceCollection AddAcceptLanguageFilteringMiddleware(this IServiceCollection services, IConfiguration configuration, Action<AcceptLanguageFilteringMiddlewareOptions>? manualConfigure = null)
         {
             services.TryAddSingleton<MiddlewareFailurePointService>();
@@ -69,14 +95,28 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// </remarks>
         /// <example>
         /// <code>
-        /// // Example usage:
-        /// services.AddAcceptLanguageFilteringMiddleware(options =>
+        /// // Example usage in Startup.cs or Program.cs:
+        /// builder.Services.AddAcceptLanguageFilteringMiddleware(options =>
         /// {
-        ///     options.Whitelist = null;
-        ///     options.Blacklist = new[] { "*zh-CN*", "*zh-*", "*-CN*", "" };
-        ///     options.DisallowedStatusCode = 400;
-        ///     options.DisallowedFailureRating = 10;
-        ///     options.ContinueOnDisallowed = true;
+        ///     // Allow specific languages
+        ///     options.Whitelist = new[] { "en-US", "en-GB", "de-DE", "fr-FR", "es-ES" };
+        ///     
+        ///     // Block specific languages
+        ///     options.Blacklist = new[] { 
+        ///         "*zh-CN*",    // Block Simplified Chinese
+        ///         "*zh-*",      // Block all Chinese variants
+        ///         "*-CN*",      // Block all Chinese regional variants
+        ///         ""            // Block empty Accept-Language header
+        ///     };
+        ///     
+        ///     // Return 403 Forbidden for disallowed languages
+        ///     options.DisallowedStatusCode = 403;
+        ///     
+        ///     // Set failure rating for monitoring and analytics
+        ///     options.DisallowedFailureRating = 5;
+        ///     
+        ///     // Stop processing pipeline on disallowed languages
+        ///     options.ContinueOnDisallowed = false;
         /// });
         /// </code>
         /// </example>
@@ -103,8 +143,16 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// </remarks>
         /// <example>
         /// <code>
-        /// // Example usage:
-        /// builder.Services.AddAcceptLanguageFilteringMiddleware();
+        /// // Example usage in Startup.cs or Program.cs:
+        /// var builder = WebApplication.CreateBuilder(args);
+        /// 
+        /// // Add services to the container
+        /// builder.Services.AddAcceptLanguageFilteringMiddleware(); // Uses default configuration
+        /// 
+        /// var app = builder.Build();
+        /// 
+        /// // Configure the HTTP request pipeline
+        /// app.UseAcceptLanguageFilteringMiddleware();
         /// </code>
         /// </example>
         public static IServiceCollection AddAcceptLanguageFilteringMiddleware(this IServiceCollection services)

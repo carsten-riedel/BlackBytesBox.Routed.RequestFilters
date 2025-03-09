@@ -10,15 +10,16 @@ using Microsoft.Extensions.Options;
 namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions
 {
     /// <summary>
-    /// Provides extension methods for registering <see cref="DnsHostNameFilteringMiddleware"/> in the application's request pipeline.
+    /// Provides extension methods for registering <see cref="AcceptLanguageFilteringMiddleware"/> in the application's request pipeline.
     /// </summary>
     public static partial class IApplicationBuilderExtensions
     {
         /// <summary>
-        /// Adds <see cref="DnsHostNameFilteringMiddleware"/> to the application's request pipeline.
+        /// Adds <see cref="AcceptLanguageFilteringMiddleware"/> to the application's request pipeline.
         /// </summary>
         /// <param name="app">The application builder.</param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static IApplicationBuilder UseAcceptLanguageFilteringMiddleware(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
@@ -34,12 +35,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         }
 
         /// <summary>
-        /// Adds <see cref="DnsHostNameFilteringMiddleware"/> to the request pipeline while applying an additional configuration.
+        /// Adds <see cref="AcceptLanguageFilteringMiddleware"/> to the request pipeline while applying an additional configuration.
         /// The extra configuration is applied on top of the DI‑registered options (which are auto‑refreshed if appsettings change).
         /// </summary>
         /// <param name="app">The application builder.</param>
-        /// <param name="additionalConfigure">A delegate to apply extra configuration to <see cref="DnsHostNameFilteringMiddlewareOptions"/>.</param>
+        /// <param name="additionalConfigure">
+        /// A delegate to apply extra configuration to <see cref="AcceptLanguageFilteringMiddlewareOptions"/>.
+        /// </param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="app"/> or <paramref name="additionalConfigure"/> is null.
+        /// </exception>
         public static IApplicationBuilder UseAcceptLanguageFilteringMiddleware(this IApplicationBuilder app, Action<AcceptLanguageFilteringMiddlewareOptions> additionalConfigure)
         {
             if (app == null)

@@ -38,6 +38,47 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// using <c>TryAddSingleton</c> to avoid duplicate registrations.
         /// </para>
         /// </remarks>
+        /// <example>
+        /// Configuration in appsettings.json:
+        /// <code>
+        /// {
+        ///   "DnsHostNameFilteringMiddlewareOptions": {
+        ///     "Whitelist": [
+        ///       "*.mycompany.com",
+        ///       "api.partner1.com",
+        ///       "api.partner2.com"
+        ///     ],
+        ///     "Blacklist": [
+        ///       "*amazonaws*",
+        ///       "*googlebot*",
+        ///       "*shodan.io*",
+        ///       "*.ru*"
+        ///     ],
+        ///     "DisallowedStatusCode": 403,
+        ///     "DisallowedFailureRating": 5,
+        ///     "ContinueOnDisallowed": false
+        ///   }
+        /// }
+        /// </code>
+        /// 
+        /// Usage in Startup.cs or Program.cs:
+        /// <code>
+        /// builder.Services.AddDnsHostNameFilteringMiddleware(
+        ///     builder.Configuration,
+        ///     options => 
+        ///     {
+        ///         // Add additional trusted domains
+        ///         options.Whitelist = options.Whitelist
+        ///             .Concat(new[] { "api.newpartner.com" })
+        ///             .ToArray();
+        ///             
+        ///         // Add more blocked patterns
+        ///         options.Blacklist = options.Blacklist
+        ///             .Concat(new[] { "*.suspicious-domain.com" })
+        ///             .ToArray();
+        ///     });
+        /// </code>
+        /// </example>
         public static IServiceCollection AddDnsHostNameFilteringMiddleware(this IServiceCollection services, IConfiguration configuration, Action<DnsHostNameFilteringMiddlewareOptions>? manualConfigure = null)
         {
             services.TryAddSingleton<MiddlewareFailurePointService>();
@@ -68,14 +109,35 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// </remarks>
         /// <example>
         /// <code>
-        /// // Example usage:
-        /// services.AddDnsHostNameFilteringMiddleware(options =>
+        /// // Example usage in Startup.cs or Program.cs:
+        /// builder.Services.AddDnsHostNameFilteringMiddleware(options =>
         /// {
-        ///     options.Whitelist = new[] { "example.com", "*.example.com" };
-        ///     options.Blacklist = new[] { "badexample.com" };
-        ///     options.DisallowedStatusCode = 400;
+        ///     // Allow specific domains and patterns
+        ///     options.Whitelist = new[] { 
+        ///         "*.mycompany.com",           // All subdomains of mycompany.com
+        ///         "api.mycompany.com",         // Specific API domain
+        ///         "partner1.mycompany.com",    // Partner subdomain
+        ///         "*.trusted-partner.com"      // Trusted partner's subdomains
+        ///     };
+        ///     
+        ///     // Block known malicious or unwanted domains
+        ///     options.Blacklist = new[] { 
+        ///         "*amazonaws*",               // AWS instances
+        ///         "*googleusercontent*",       // Google cloud instances
+        ///         "*shodan.io*",              // Shodan scanner
+        ///         "*shadowserver.org*",        // Security scanner
+        ///         "*.ru*",                    // Russian domains
+        ///         "*onyphe.net"               // Security scanner
+        ///     };
+        ///     
+        ///     // Return 403 Forbidden for disallowed hosts
+        ///     options.DisallowedStatusCode = 403;
+        ///     
+        ///     // Set high failure rating for security monitoring
         ///     options.DisallowedFailureRating = 10;
-        ///     options.ContinueOnDisallowed = true;
+        ///     
+        ///     // Stop processing pipeline for disallowed hosts
+        ///     options.ContinueOnDisallowed = false;
         /// });
         /// </code>
         /// </example>
@@ -102,8 +164,20 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// </remarks>
         /// <example>
         /// <code>
-        /// // Example usage:
-        /// builder.Services.AddDnsHostNameFilteringMiddleware();
+        /// // Example usage in Startup.cs or Program.cs:
+        /// var builder = WebApplication.CreateBuilder(args);
+        /// 
+        /// // Add services to the container
+        /// builder.Services.AddDnsHostNameFilteringMiddleware(); // Uses default configuration
+        /// 
+        /// var app = builder.Build();
+        /// 
+        /// // Configure the HTTP request pipeline
+        /// app.UseHttpsRedirection();
+        /// app.UseDnsHostNameFilteringMiddleware(); // Add the middleware to the pipeline
+        /// app.MapControllers();
+        /// 
+        /// app.Run();
         /// </code>
         /// </example>
         public static IServiceCollection AddDnsHostNameFilteringMiddleware(this IServiceCollection services)

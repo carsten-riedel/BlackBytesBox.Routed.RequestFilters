@@ -10,15 +10,16 @@ using Microsoft.Extensions.Options;
 namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions
 {
     /// <summary>
-    /// Provides extension methods for registering <see cref="SegmentFilteringMiddleware"/> in the application's request pipeline.
+    /// Provides extension methods for registering <see cref="HeaderValuesRequiredFilteringMiddleware"/> in the application's request pipeline.
     /// </summary>
     public static partial class IApplicationBuilderExtensions
     {
         /// <summary>
-        /// Adds <see cref="SegmentFilteringMiddleware"/> to the application's request pipeline.
+        /// Adds <see cref="HeaderValuesRequiredFilteringMiddleware"/> to the application's request pipeline.
         /// </summary>
         /// <param name="app">The application builder.</param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static IApplicationBuilder UseHeaderValuesRequiredFilteringMiddleware(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
@@ -34,12 +35,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         }
 
         /// <summary>
-        /// Adds <see cref="SegmentFilteringMiddleware"/> to the request pipeline while applying an additional configuration.
+        /// Adds <see cref="HeaderValuesRequiredFilteringMiddleware"/> to the request pipeline while applying an additional configuration.
         /// The extra configuration is applied on top of the DI‑registered options (which are auto‑refreshed if appsettings change).
         /// </summary>
         /// <param name="app">The application builder.</param>
-        /// <param name="additionalConfigure">A delegate to apply extra configuration to <see cref="SegmentFilteringMiddlewareOptions"/>.</param>
+        /// <param name="additionalConfigure">
+        /// A delegate to apply extra configuration to <see cref="HeaderValuesRequiredFilteringMiddlewareOptions"/>.
+        /// </param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="app"/> or <paramref name="additionalConfigure"/> is null.
+        /// </exception>
         public static IApplicationBuilder UseHeaderValuesRequiredFilteringMiddleware(this IApplicationBuilder app, Action<HeaderValuesRequiredFilteringMiddlewareOptions> additionalConfigure)
         {
             if (app == null)

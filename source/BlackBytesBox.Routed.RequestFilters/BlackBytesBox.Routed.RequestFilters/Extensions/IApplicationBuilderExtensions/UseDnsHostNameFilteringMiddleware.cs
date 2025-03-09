@@ -18,6 +18,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// </summary>
         /// <param name="app">The application builder.</param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static IApplicationBuilder UseDnsHostNameFilteringMiddleware(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
@@ -37,8 +38,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// The extra configuration is applied on top of the DI‑registered options (which are auto‑refreshed if appsettings change).
         /// </summary>
         /// <param name="app">The application builder.</param>
-        /// <param name="additionalConfigure">A delegate to apply extra configuration to <see cref="DnsHostNameFilteringMiddlewareOptions"/>.</param>
+        /// <param name="additionalConfigure">
+        /// A delegate to apply extra configuration to <see cref="DnsHostNameFilteringMiddlewareOptions"/>.
+        /// </param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="app"/> or <paramref name="additionalConfigure"/> is null.
+        /// </exception>
         public static IApplicationBuilder UseDnsHostNameFilteringMiddleware(this IApplicationBuilder app, Action<DnsHostNameFilteringMiddlewareOptions> additionalConfigure)
         {
             if (app == null)

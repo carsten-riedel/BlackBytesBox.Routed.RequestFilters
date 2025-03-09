@@ -12,17 +12,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
 {
     /// <summary>
     /// Provides extension methods for configuring the <see cref="IServiceCollection"/> with 
-    /// <see cref="UserAgentFilteringMiddlewareOptions"/>.
+    /// <see cref="RemoteIPFilteringMiddlewareOptions"/>.
     /// </summary>
     public static partial class IServiceCollectionExtensions
     {
         /// <summary>
-        /// Registers <see cref="UserAgentFilteringMiddlewareOptions"/> from the application configuration
+        /// Registers <see cref="RemoteIPFilteringMiddlewareOptions"/> from the application configuration
         /// and optionally applies additional code-based configuration.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="configuration">
-        /// The application configuration containing a section named "<c>UserAgentFilteringMiddlewareOptions</c>".
+        /// The application configuration containing a section named "<c>RemoteIPFilteringMiddlewareOptions</c>".
         /// </param>
         /// <param name="manualConfigure">
         /// An optional delegate to modify or augment the bound configuration.
@@ -32,7 +32,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// <remarks>
         /// <para>
         /// Ensure that the configuration includes a section with the name 
-        /// "<c>UserAgentFilteringMiddlewareOptions</c>". If the section is missing, default values will be used,
+        /// "<c>RemoteIPFilteringMiddlewareOptions</c>". If the section is missing, default values will be used,
         /// which may not be appropriate for your environment.
         /// </para>
         /// <para>
@@ -57,11 +57,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         }
 
         /// <summary>
-        /// Registers <see cref="UserAgentFilteringMiddlewareOptions"/> using a direct manual configuration delegate.
+        /// Registers <see cref="RemoteIPFilteringMiddlewareOptions"/> using a direct manual configuration delegate.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="manualConfigure">
-        /// A delegate for configuring <see cref="UserAgentFilteringMiddlewareOptions"/> directly.
+        /// A delegate for configuring <see cref="RemoteIPFilteringMiddlewareOptions"/> directly.
         /// </param>
         /// <returns>The updated service collection.</returns>
         /// <remarks>
@@ -71,22 +71,22 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// <example>
         /// <code>
         /// // Example usage:
-        /// services.AddUserAgentFilteringMiddleware(options =>
+        /// services.AddRemoteIPFilteringMiddleware(options =>
         /// {
-        ///     // Configure allowed User-Agent patterns for typical browsers.
-        ///     options.Whitelist = new[] { "Mozilla/5.0*", "Chrome/90.0*", "Safari/605.1.15*" };
+        ///     // Configure allowed IP patterns
+        ///     options.Whitelist = null;
         ///     
-        ///     // Configure disallowed User-Agent patterns for non-browser clients.
-        ///     options.Blacklist = new[] { "*curl*", "*wget*", "*python-requests*", "*HttpClient-Test*" };
+        ///     // Configure disallowed IP patterns
+        ///     options.Blacklist = new[] { "8.8.8.8" };
         ///     
-        ///     // Set the response status code for disallowed requests.
+        ///     // Set the response status code for disallowed requests
         ///     options.DisallowedStatusCode = 400;
         ///     
-        ///     // Set the failure rating that will be recorded.
-        ///     options.DisallowedFailureRating = 10;
+        ///     // Set the failure rating that will be recorded
+        ///     options.DisallowedFailureRating = 1;
         ///     
-        ///     // Determine whether processing should continue when a disallowed User-Agent is encountered.
-        ///     options.ContinueOnDisallowed = false;
+        ///     // Determine whether processing should continue when a disallowed IP is encountered
+        ///     options.ContinueOnDisallowed = true;
         /// });
         /// </code>
         /// </example>
@@ -102,19 +102,19 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         }
 
         /// <summary>
-        /// Registers <see cref="UserAgentFilteringMiddlewareOptions"/> with a default configuration.
+        /// Registers <see cref="RemoteIPFilteringMiddlewareOptions"/> with a default configuration.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <returns>The updated service collection.</returns>
         /// <remarks>
-        /// This overload applies a default configuration to <see cref="UserAgentFilteringMiddlewareOptions"/>.
+        /// This overload applies a default configuration to <see cref="RemoteIPFilteringMiddlewareOptions"/>.
         /// The default settings include values for Whitelist, Blacklist, DisallowedStatusCode, DisallowedFailureRating,
         /// and ContinueOnDisallowed. Ensure these defaults match your application's requirements.
         /// </remarks>
         /// <example>
         /// <code>
         /// // Example usage:
-        /// builder.Services.AddUserAgentFilteringMiddleware();
+        /// builder.Services.AddRemoteIPFilteringMiddleware();
         /// </code>
         /// </example>
         public static IServiceCollection AddRemoteIPFilteringMiddleware(this IServiceCollection services)

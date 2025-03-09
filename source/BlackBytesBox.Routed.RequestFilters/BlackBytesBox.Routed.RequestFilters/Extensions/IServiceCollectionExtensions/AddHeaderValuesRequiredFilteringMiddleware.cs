@@ -12,17 +12,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
 {
     /// <summary>
     /// Provides extension methods for configuring the <see cref="IServiceCollection"/> with
-    /// <see cref="HeaderPresentsFilteringMiddlewareOptions"/>.
+    /// <see cref="HeaderValuesRequiredFilteringMiddlewareOptions"/>.
     /// </summary>
     public static partial class IServiceCollectionExtensions
     {
         /// <summary>
-        /// Registers <see cref="HeaderPresentsFilteringMiddlewareOptions"/> from the application configuration
+        /// Registers <see cref="HeaderValuesRequiredFilteringMiddlewareOptions"/> from the application configuration
         /// and optionally applies additional code-based configuration.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="configuration">
-        /// The application configuration containing a section named "<c>HeaderPresentsFilteringMiddlewareOptions</c>".
+        /// The application configuration containing a section named "<c>HeaderValuesRequiredFilteringMiddlewareOptions</c>".
         /// </param>
         /// <param name="manualConfigure">
         /// An optional delegate to modify or augment the bound configuration.
@@ -32,7 +32,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// <remarks>
         /// <para>
         /// Ensure that the configuration includes a section with the name
-        /// "<c>HeaderPresentsFilteringMiddlewareOptions</c>". If the section is missing, default values will be used,
+        /// "<c>HeaderValuesRequiredFilteringMiddlewareOptions</c>". If the section is missing, default values will be used,
         /// which may not be appropriate for your environment.
         /// </para>
         /// <para>
@@ -57,11 +57,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         }
 
         /// <summary>
-        /// Registers <see cref="HeaderPresentsFilteringMiddlewareOptions"/> using a direct manual configuration delegate.
+        /// Registers <see cref="HeaderValuesRequiredFilteringMiddlewareOptions"/> using a direct manual configuration delegate.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="manualConfigure">
-        /// A delegate for configuring <see cref="HeaderPresentsFilteringMiddlewareOptions"/> directly.
+        /// A delegate for configuring <see cref="HeaderValuesRequiredFilteringMiddlewareOptions"/> directly.
         /// </param>
         /// <returns>The updated service collection.</returns>
         /// <remarks>
@@ -71,12 +71,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// <example>
         /// <code>
         /// // Example usage:
-        /// services.AddHeaderPresentsFilteringMiddleware(options =>
+        /// services.AddHeaderValuesRequiredFilteringMiddleware(options =>
         /// {
-        ///     options.Whitelist = new[] { "*" };
-        ///     options.Blacklist = new[] { "*strangeoptions*" };
+        ///     options.Headers.Add("User-Agent", new HeaderFilterRule() { Allowed = new string[] { "*" } });
         ///     options.DisallowedStatusCode = 400;
-        ///     options.DisallowedFailureRating = 10;
+        ///     options.DisallowedFailureRating = 1;
         ///     options.ContinueOnDisallowed = true;
         /// });
         /// </code>
@@ -93,19 +92,19 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         }
 
         /// <summary>
-        /// Registers <see cref="HeaderPresentsFilteringMiddlewareOptions"/> with a default configuration.
+        /// Registers <see cref="HeaderValuesRequiredFilteringMiddlewareOptions"/> with a default configuration.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <returns>The updated service collection.</returns>
         /// <remarks>
-        /// This overload applies a default configuration to <see cref="HeaderPresentsFilteringMiddlewareOptions"/>.
-        /// The default settings include values for Whitelist, Blacklist, DisallowedStatusCode, DisallowedFailureRating,
+        /// This overload applies a default configuration to <see cref="HeaderValuesRequiredFilteringMiddlewareOptions"/>.
+        /// The default settings include values for Headers, DisallowedStatusCode, DisallowedFailureRating,
         /// and ContinueOnDisallowed. Ensure these defaults match your application's requirements.
         /// </remarks>
         /// <example>
         /// <code>
         /// // Example usage:
-        /// builder.Services.AddHeaderPresentsFilteringMiddleware();
+        /// builder.Services.AddHeaderValuesRequiredFilteringMiddleware();
         /// </code>
         /// </example>
         public static IServiceCollection AddHeaderValuesRequiredFilteringMiddleware(this IServiceCollection services)

@@ -8,17 +8,18 @@ BlackBytesBox.Routed.RequestFilters contains various middleware filters that can
 
 ## Available Filters
 
-- **AcceptLanguageFilteringMiddleware**: Filters requests based on Accept-Language header
-- **RequestUrlFilteringMiddleware**: Filters requests based on URL patterns
-- **HttpProtocolFilteringMiddleware**: Filters requests based on HTTP protocol version
-- **SegmentFilteringMiddleware**: Filters requests based on URL segments
-- **UserAgentFilteringMiddleware**: Filters requests based on User-Agent header
-- **RemoteIPFilteringMiddleware**: Filters requests based on remote IP address
-- **HostNameFilteringMiddleware**: Filters requests based on host name
-- **DnsHostNameFilteringMiddleware**: Filters requests based on DNS hostname
-- **HeaderValuesRequiredFilteringMiddleware**: Validates required HTTP header values
-- **HeaderPresentsFilteringMiddleware**: Validates presence of required headers
-- **FailurePointsFilteringMiddleware**: Manages request failure tracking
+- **RemoteIPFilteringMiddleware**: Filters requests based on remote IP address. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
+- **AcceptLanguageFilteringMiddleware**: Filters requests based on Accept-Language header. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
+- **RequestUrlFilteringMiddleware**: Filters requests based on URL patterns. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
+- **HttpProtocolFilteringMiddleware**: Filters requests based on HTTP protocol version. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
+- **SegmentFilteringMiddleware**: Filters requests based on URL segments. Blacklist takes precedence - if any segment is blacklisted, request is blocked regardless of whitelist.
+- **UserAgentFilteringMiddleware**: Filters requests based on User-Agent header. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
+- **HostNameFilteringMiddleware**: Filters requests based on host name. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
+- **DnsHostNameFilteringMiddleware**: Filters requests based on DNS hostname. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
+- **HeaderValuesRequiredFilteringMiddleware**: Validates required HTTP header values. Uses only allowed values list for validation.
+- **HeaderPresentsFilteringMiddleware**: Validates presence of required headers. Blacklist takes precedence - if any header is blacklisted, request is blocked.
+- **PathDeepFilteringMiddleware**: Limits URL path depth. Uses only depth limit configuration.
+- **FailurePointsFilteringMiddleware**: Manages request failure tracking. Uses accumulated points against configured limit.
 
 ## Features
 
@@ -125,6 +126,169 @@ services.AddSegmentFilteringMiddleware(options =>
     options.DisallowedStatusCode = 400;
     options.DisallowedFailureRating = 10;
 });
+```
+
+## Failure Points System
+
+The library includes a sophisticated failure tracking system that monitors and accumulates failure points for requests based on their IP addresses. This system persists failure data between application restarts and can be used to implement rate limiting and request blocking based on accumulated failures.
+
+### Configuration
+
+Configure the FailurePoints system in your `appsettings.json`:
+
+```json
+{
+  "FailurePointsFilteringMiddlewareOptions": {
+    "DumpFilePath": "failurepoints.json",
+    "FailurePointsLimit": 50,
+    "DisallowedStatusCode": 403,
+    "ContinueOnDisallowed": false
+  }
+}
+```
+
+### How It Works
+
+The system tracks failure points per IP address across all middleware:
+- Each middleware can assign failure points for rule violations
+- Points are persisted to disk and survive application restarts
+- Requests are blocked when total points exceed the configured limit
+
+### Implementation Strategies
+
+The FailurePoints middleware can be positioned either early or late in the pipeline, enabling different security strategies:
+
+#### Early Pipeline Position (Preemptive Blocking)
+
+Block suspicious IPs immediately before they reach other middleware:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services with configuration from appsettings.json
+builder.Services.AddFailurePointsFilteringMiddleware(builder.Configuration);
+builder.Services.AddAcceptLanguageFilteringMiddleware(builder.Configuration);
+builder.Services.AddRequestUrlFilteringMiddleware(builder.Configuration);
+
+var app = builder.Build();
+
+// Block suspicious IPs immediately
+app.UseFailurePointsFilteringMiddleware();
+
+// Other middleware only processes non-blocked requests
+app.UseAcceptLanguageFilteringMiddleware();
+app.UseRequestUrlFilteringMiddleware();
+
+app.Run();
+```
+
+#### Late Pipeline Position (Accumulative Blocking)
+
+Monitor and accumulate failures across middleware before blocking:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure services to continue on failure and accumulate points
+builder.Services.AddAcceptLanguageFilteringMiddleware(options => 
+{
+    options.ContinueOnDisallowed = true;
+    options.DisallowedFailureRating = 5;
+});
+
+builder.Services.AddRequestUrlFilteringMiddleware(options => 
+{
+    options.ContinueOnDisallowed = true;
+    options.DisallowedFailureRating = 10;
+});
+
+// Configure FailurePoints with custom settings
+builder.Services.AddFailurePointsFilteringMiddleware(options =>
+{
+    options.DumpFilePath = Path.Combine(AppContext.BaseDirectory, "failurepoints.json");
+    options.FailurePointsLimit = 50;
+    options.DisallowedStatusCode = StatusCodes.Status403Forbidden;
+    options.ContinueOnDisallowed = false;
+});
+
+var app = builder.Build();
+
+// Let other middleware accumulate failure points
+app.UseAcceptLanguageFilteringMiddleware();
+app.UseRequestUrlFilteringMiddleware();
+
+// Block requests that have accumulated too many points
+app.UseFailurePointsFilteringMiddleware();
+
+app.Run();
+```
+
+#### Mixed Configuration Example
+
+Using both appsettings and code configuration:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Add base configuration from appsettings.json
+builder.Services.AddFailurePointsFilteringMiddleware(builder.Configuration);
+
+// Add other middleware with mixed configuration
+builder.Services.AddAcceptLanguageFilteringMiddleware(builder.Configuration, options => 
+{
+    // Override or add to appsettings configuration
+    options.ContinueOnDisallowed = true;
+    options.DisallowedFailureRating = 5;
+});
+
+builder.Services.AddRequestUrlFilteringMiddleware(options => 
+{
+    // Direct code configuration
+    options.Whitelist = new[] { "/api/*", "/home/*" };
+    options.ContinueOnDisallowed = true;
+    options.DisallowedFailureRating = 10;
+});
+
+var app = builder.Build();
+
+// Configure middleware pipeline
+app.UseAcceptLanguageFilteringMiddleware();
+app.UseRequestUrlFilteringMiddleware();
+app.UseFailurePointsFilteringMiddleware();
+
+app.Run();
+```
+
+This late-pipeline strategy allows:
+- Monitoring of multiple violation types before taking action
+- Accumulation of failure points across different middleware
+- Final decision making based on total accumulated failures
+- More detailed failure data collection for analysis
+
+### Persisted Data Format
+
+The failure points data will be automatically saved to the specified JSON file and will look something like this:
+
+```json
+{
+  "SummaryBySource": {
+    "192.168.1.1": [
+      {
+        "FailurePoint": 5,
+        "FailureSource": "AcceptLanguageFilteringMiddleware"
+      },
+      {
+        "FailurePoint": 10,
+        "FailureSource": "RequestUrlFilteringMiddleware"
+      }
+    ]
+  },
+  "SummaryByIp": {
+    "192.168.1.1": {
+      "FailurePoint": 15
+    }
+  }
+}
 ```
 
 ## Common Options

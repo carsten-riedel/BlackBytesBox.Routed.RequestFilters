@@ -90,6 +90,8 @@ $reportsOutputFolderName = "reports"
 $outputRootArtifactsDirectory = New-DirectoryFromSegments -Paths @($topLevelDirectory, $artifactsOutputFolderName)
 $outputRootReportResultsDirectory = New-DirectoryFromSegments -Paths @($topLevelDirectory, $reportsOutputFolderName)
 $targetConfigAllowedLicenses = Join-Segments -Segments @($topLevelDirectory, ".config", "allowed-licenses.json")
+$targetConfigLicensesMappings = Join-Segments -Segments @($topLevelDirectory, ".config", "licenses-mapping.json")
+
 
 if (-not $isCiCd) { Delete-FilesByPattern -Path "$outputRootArtifactsDirectory" -Pattern "*"  }
 if (-not $isCiCd) { Delete-FilesByPattern -Path "$outputRootReportResultsDirectory" -Pattern "*"  }
@@ -161,7 +163,7 @@ foreach ($projectFile in $solutionProjectsObj) {
         $jsonOutputBom = Invoke-Exec -Executable "dotnet" -Arguments @("list", "$($projectFile.FullName)", "package", "--include-transitive", "--format", "json")
         New-DotnetBillOfMaterialsReport -jsonInput $jsonOutputBom -OutputFile "$outputReportDirectory\ReportBillOfMaterials.md" -OutputFormat markdown -IgnoreTransitivePackages $true
     
-        Invoke-Exec -Executable "dotnet" -Arguments @("nuget-license", "--input", "$($projectFile.FullName)", "--allowed-license-types", "$targetConfigAllowedLicenses", "--output", "JsonPretty", "--file-output", "$outputReportDirectory/ReportProjectLicences.json")  -CaptureOutput $false
+        Invoke-Exec -Executable "dotnet" -Arguments @("nuget-license", "--input", "$($projectFile.FullName)", "--allowed-license-types", "$targetConfigAllowedLicenses", "--output", "JsonPretty", "--licenseurl-to-license-mappings" ,"$targetConfigLicensesMappings", "--file-output", "$outputReportDirectory/ReportProjectLicences.json" )
         Generate-ThirdPartyNotices -LicenseJsonPath "$outputReportDirectory/ReportProjectLicences.json" -OutputPath "$outputReportDirectory\ReportThirdPartyNotices.txt"
     }
 
@@ -180,11 +182,12 @@ foreach ($projectFile in $solutionProjectsObj) {
         Invoke-Exec -Executable "dotnet" -Arguments @("publish", "$($projectFile.FullName)", "-c", "Release","-p:""Stage=publish""")  -CommonArguments $commonProjectParameters -CaptureOutput $false
     }
 
-    if (($isPackable -eq $true) -or ($isPublishable -eq $true))
+    if ($isPackable -eq $true)
     {
         $replacements = @{
             "sourceCodeDirectory" = "$($projectFile.DirectoryName)"
             "outputDirectory"     = "$outputReportDirectory\docfx"
+            "projfilebasename"     = "$($projectFile.BaseName)"
         }
         Replace-FilePlaceholders -InputFile "$topLevelDirectory/.config/docfx/build/docfx_local_template.json" -OutputFile "$topLevelDirectory/.config/docfx/build/docfx_local.json" -Replacements $replacements
         dotnet docfx "$topLevelDirectory/.config/docfx/build/docfx_local.json"

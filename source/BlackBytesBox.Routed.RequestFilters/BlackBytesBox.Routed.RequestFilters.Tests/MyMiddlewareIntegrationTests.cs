@@ -55,7 +55,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             builder.Services.AddAcceptLanguageFilteringMiddleware(builder.Configuration);
             builder.Services.AddSegmentFilteringMiddleware(builder.Configuration);
             builder.Services.AddPathDeepFilteringMiddleware(builder.Configuration);
-            builder.Services.AddHeaderValuesFilteringMiddleware(builder.Configuration);
+            builder.Services.AddHeaderValuesRequiredFilteringMiddleware(builder.Configuration);
             builder.Services.AddFailurePointsFilteringMiddleware(builder.Configuration);
 
 
@@ -76,7 +76,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             app.UseAcceptLanguageFilteringMiddleware();
             app.UseSegmentFilteringMiddleware(); 
             app.UsePathDeepFilteringMiddleware();
-            app.UseHeaderValuesFilteringMiddleware();
+            app.UseHeaderValuesRequiredFilteringMiddleware();
             app.UseFailurePointsFilteringMiddleware();
 
 

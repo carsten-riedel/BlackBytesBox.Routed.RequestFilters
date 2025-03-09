@@ -1,5 +1,6 @@
 ﻿using System;
 
+using BlackBytesBox.Routed.RequestFilters.Middleware;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Services;
 
@@ -39,17 +40,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// <c>TryAddSingleton</c> to avoid duplicate registrations.
         /// </para>
         /// </remarks>
-        public static IServiceCollection AddHeaderValuesFilteringMiddleware(this IServiceCollection services, IConfiguration configuration, Action<HeaderValuesFilteringMiddlewareOptions>? manualConfigure = null)
+        public static IServiceCollection AddHeaderValuesRequiredFilteringMiddleware(this IServiceCollection services, IConfiguration configuration, Action<HeaderValuesRequiredFilteringMiddlewareOptions>? manualConfigure = null)
         {
             services.TryAddSingleton<MiddlewareFailurePointService>();
 
             // Bind configuration from appsettings.json (reloadOnChange is enabled by default).
-            services.Configure<HeaderValuesFilteringMiddlewareOptions>(configuration.GetSection(nameof(HeaderValuesFilteringMiddlewareOptions)));
+            services.Configure<HeaderValuesRequiredFilteringMiddlewareOptions>(configuration.GetSection(nameof(HeaderValuesRequiredFilteringMiddlewareOptions)));
 
             // Optionally apply additional code configuration.
             if (manualConfigure != null)
             {
-                services.PostConfigure<HeaderValuesFilteringMiddlewareOptions>(manualConfigure);
+                services.PostConfigure<HeaderValuesRequiredFilteringMiddlewareOptions>(manualConfigure);
             }
 
             return services;
@@ -80,7 +81,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// });
         /// </code>
         /// </example>
-        public static IServiceCollection AddHeaderValuesFilteringMiddleware(this IServiceCollection services, Action<HeaderValuesFilteringMiddlewareOptions> manualConfigure)
+        public static IServiceCollection AddHeaderValuesRequiredFilteringMiddleware(this IServiceCollection services, Action<HeaderValuesRequiredFilteringMiddlewareOptions> manualConfigure)
         {
             // Ensure the MiddlewareFailurePointService is registered.
             services.TryAddSingleton<MiddlewareFailurePointService>();
@@ -107,11 +108,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// builder.Services.AddHeaderPresentsFilteringMiddleware();
         /// </code>
         /// </example>
-        public static IServiceCollection AddHeaderValuesFilteringMiddleware(this IServiceCollection services)
+        public static IServiceCollection AddHeaderValuesRequiredFilteringMiddleware(this IServiceCollection services)
         {
-            return services.AddHeaderValuesFilteringMiddleware(configuration =>
+            return services.AddHeaderValuesRequiredFilteringMiddleware(configuration =>
             {
-                configuration.Headers.Add("X-Frame-Options", new HeaderFilterRule() { Blacklist = new string[] { "" }, Whitelist = new string[] { "sd" } });
+                configuration.Headers.Add("User-Agent", new HeaderFilterRule() { Allowed = new string[] { "*" } });
                 configuration.DisallowedStatusCode = 400;
                 configuration.DisallowedFailureRating = 1;
                 configuration.ContinueOnDisallowed = true;

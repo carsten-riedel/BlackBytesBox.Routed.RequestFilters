@@ -5,7 +5,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware.Options
     /// <summary>
     /// Represents the configuration options for header values filtering middleware.
     /// </summary>
-    public class HeaderValuesFilteringMiddlewareOptions
+    public class HeaderValuesRequiredFilteringMiddlewareOptions
     {
         /// <summary>
         /// Gets or sets the dictionary of header filtering rules.
@@ -38,13 +38,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware.Options
         /// Gets or sets the list of whitelist patterns for the header.
         /// If a header value matches any of these patterns, it is allowed.
         /// </summary>
-        public string[]? Whitelist { get; set; }
-
-        /// <summary>
-        /// Gets or sets the list of blacklist patterns for the header.
-        /// If a header value matches any of these patterns, it is disallowed.
-        /// </summary>
-        public string[]? Blacklist { get; set; }
+        public string[]? Allowed { get; set; }
     }
 }
 

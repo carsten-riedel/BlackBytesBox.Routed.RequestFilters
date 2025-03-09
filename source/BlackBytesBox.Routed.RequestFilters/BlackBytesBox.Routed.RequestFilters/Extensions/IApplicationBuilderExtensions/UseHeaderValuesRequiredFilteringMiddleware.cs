@@ -1,7 +1,7 @@
 ﻿using System;
 
-using BlackBytesBox.Routed.RequestFilters.Middleware;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
+using BlackBytesBox.Routed.RequestFilters.Middleware;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +19,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// </summary>
         /// <param name="app">The application builder.</param>
         /// <returns>The updated application builder.</returns>
-        public static IApplicationBuilder UseHeaderValuesFilteringMiddleware(this IApplicationBuilder app)
+        public static IApplicationBuilder UseHeaderValuesRequiredFilteringMiddleware(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
 
@@ -30,7 +30,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
                 app.UseMiddleware<RemoteIPFilteringMiddleware>();
             }
 
-            return app.UseMiddleware<HeaderValuesFilteringMiddleware>();
+            return app.UseMiddleware<HeaderValuesRequiredFilteringMiddleware>();
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// <param name="app">The application builder.</param>
         /// <param name="additionalConfigure">A delegate to apply extra configuration to <see cref="SegmentFilteringMiddlewareOptions"/>.</param>
         /// <returns>The updated application builder.</returns>
-        public static IApplicationBuilder UseHeaderValuesFilteringMiddleware(this IApplicationBuilder app, Action<HeaderValuesFilteringMiddlewareOptions> additionalConfigure)
+        public static IApplicationBuilder UseHeaderValuesRequiredFilteringMiddleware(this IApplicationBuilder app, Action<HeaderValuesRequiredFilteringMiddlewareOptions> additionalConfigure)
         {
             if (app == null)
                 throw new ArgumentNullException(nameof(app));
@@ -48,10 +48,10 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
                 throw new ArgumentNullException(nameof(additionalConfigure));
 
             // Retrieve the DI-registered IOptionsMonitor for SegmentFilteringMiddlewareOptions.
-            var innerOptionsMonitor = app.ApplicationServices.GetRequiredService<IOptionsMonitor<HeaderValuesFilteringMiddlewareOptions>>();
+            var innerOptionsMonitor = app.ApplicationServices.GetRequiredService<IOptionsMonitor<HeaderValuesRequiredFilteringMiddlewareOptions>>();
 
             // Decorate the options monitor so that additional configuration is applied on each access.
-            var decoratedOptionsMonitor = new ConfiguredOptionsMonitor<HeaderValuesFilteringMiddlewareOptions>(innerOptionsMonitor, additionalConfigure);
+            var decoratedOptionsMonitor = new ConfiguredOptionsMonitor<HeaderValuesRequiredFilteringMiddlewareOptions>(innerOptionsMonitor, additionalConfigure);
 
             // Check if the RemoteIPFilteringMiddleware has already been added.
             if (!app.GetProperty<RemoteIPFilteringMiddleware, bool>())
@@ -62,7 +62,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
 
             // The middleware's constructor expects a RequestDelegate and an IOptionsMonitor of SegmentFilteringMiddlewareOptions.
             // The RequestDelegate is auto-resolved, and we supply our decorated options monitor.
-            return app.UseMiddleware<HeaderValuesFilteringMiddleware>(decoratedOptionsMonitor);
+            return app.UseMiddleware<HeaderValuesRequiredFilteringMiddleware>(decoratedOptionsMonitor);
         }
     }
 }

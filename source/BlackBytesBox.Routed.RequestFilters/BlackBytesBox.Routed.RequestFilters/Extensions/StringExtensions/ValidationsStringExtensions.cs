@@ -82,6 +82,18 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
             return false;
         }
 
+        public static bool MatchesAnyPattern(this string? input, IEnumerable<string>? patterns)
+        {
+            return MatchesAnyPattern(input, patterns?.ToList());
+        }
+
+        public static bool MatchesAnyPattern(this string? input, string pattern)
+        {
+
+                return input.MatchesAnyPattern(new List<string>() { pattern });
+
+        }
+
         /// <summary>
         /// Extension method to evaluate this string instance against optional whitelist and blacklist patterns to determine
         /// whether the operation should continue.

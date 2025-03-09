@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Text.Json;
 using System.Threading.Tasks;
-
-using BlackBytesBox.Routed.RequestFilters.Services.Options;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace BlackBytesBox.Routed.RequestFilters.Services
 {
@@ -70,6 +68,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
 
         // Thread‑safe collections for failure summaries.
         private readonly PerKeyLockableList<FailureSummaryBySource> _summaryBySource = new();
+
         private readonly PerKeyLockable<FailureSummaryByIp> _summaryByIp = new();
 
         private readonly ILogger<MiddlewareFailurePointService> _logger;
@@ -80,7 +79,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
         /// <param name="options">The options monitor for service configuration.</param>
         /// <param name="logger">The logger instance.</param>
         /// <param name="hostApplicationLifetime">The host application lifetime.</param>
-        public MiddlewareFailurePointService(IOptionsMonitor<MiddlewareFailurePointServiceOptions> options, ILogger<MiddlewareFailurePointService> logger, IHostApplicationLifetime hostApplicationLifetime)
+        public MiddlewareFailurePointService(ILogger<MiddlewareFailurePointService> logger, IHostApplicationLifetime hostApplicationLifetime)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -93,24 +92,39 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
         /// <param name="failurePoint">The number of points to add.</param>
         /// <param name="requestedTime">The timestamp when the failure occurred.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
+        /// <summary>
+        /// Adds or updates the failure point for a given request IP, both by source and overall.
+        /// </summary>
+        /// <param name="requestIp">The IP address from which the request originated.</param>
+        /// <param name="failureSource">The source of the failure.</param>
+        /// <param name="failurePoint">The number of failure points to add.</param>
+        /// <param name="requestedTime">The time when the request was made.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>
+        /// This method logs an information level message with the request details and then updates two separate failure summaries.
+        /// The failure summary by source is updated with a single debug log after either creating or updating the summary.
+        /// </remarks>
         public async Task AddOrUpdateFailurePointAsync(string requestIp, string failureSource, int failurePoint, DateTime requestedTime)
         {
-            _logger.LogInformation("AddOrUpdateFailurePointAsync started for RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}",requestIp, failureSource, failurePoint, requestedTime);
+            //_logger.LogDebug("RequestIp: {RequestIp}, Source: {Source}, FailurePoint: {FailurePoint}, RequestedTime: {RequestedTime}", requestIp, failureSource, failurePoint, requestedTime);
 
             // Update the failure summary by source for the given requestIp key.
             await _summaryBySource.UpdateAsync(requestIp, list =>
             {
+                // Find the existing summary by source.
                 var item = list.FirstOrDefault(e => e.FailureSource == failureSource);
                 if (item == null)
                 {
-                    list.Add(new FailureSummaryBySource(failureSource, failurePoint));
-                    _logger.LogDebug("Created new failure summary for Source {Source} on RequestIp {RequestIp} with initial FailurePoint {FailurePoint}.",failureSource, requestIp, failurePoint);
+                    // Create and add a new summary if it does not exist.
+                    item = new FailureSummaryBySource(failureSource, failurePoint);
+                    list.Add(item);
                 }
                 else
                 {
+                    // Otherwise, update the existing summary.
                     item.FailurePoint += failurePoint;
-                    _logger.LogDebug("Updated failure summary for Source {Source} on RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.",failureSource, requestIp, item.FailurePoint);
                 }
+                // Single logging call that covers both cases.
             });
 
             // Update the failure summary by IP for the given requestIp key.
@@ -118,11 +132,105 @@ namespace BlackBytesBox.Routed.RequestFilters.Services
             {
                 current ??= new FailureSummaryByIp(0);
                 current.FailurePoint += failurePoint;
-                _logger.LogDebug("Updated failure summary for RequestIp {RequestIp}. New FailurePoint: {FailurePoint}.",requestIp, current.FailurePoint);
                 return current;
             });
+        }
 
-            _logger.LogInformation("AddOrUpdateFailurePointAsync completed for RequestIp: {RequestIp}", requestIp);
+        public async Task<IReadOnlyList<FailureSummaryBySource>> GetSummaryBySourceAsync(string requestIp)
+        {
+            return await _summaryBySource.GetAsync(requestIp);
+        }
+
+        public async Task<FailureSummaryByIp> GetSummaryByIPAsync(string requestIp)
+        {
+            return await _summaryByIp.GetAsync(requestIp);
+        }
+
+        /// <summary>
+        /// Asynchronously loads persisted JSON data and updates the internal collections.
+        /// </summary>
+        /// <param name="filePath">The file path of the JSON dump.</param>
+        public async Task LoadDataFromJsonAsync(string filePath)
+        {
+            try
+            {
+                if (!File.Exists(filePath))
+                {
+                    _logger.LogInformation("No persisted data file found at {FilePath}.", filePath);
+                    return;
+                }
+
+                var json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+                var dumpData = JsonSerializer.Deserialize<DumpData>(json);
+                if (dumpData == null)
+                {
+                    _logger.LogWarning("Deserialized dump data was null from file {FilePath}.", filePath);
+                    return;
+                }
+
+                // Load SummaryBySource data.
+                foreach (var kvp in dumpData.SummaryBySource)
+                {
+                    string requestIp = kvp.Key;
+                    var summaries = kvp.Value;
+                    foreach (var summary in summaries)
+                    {
+                        await _summaryBySource.UpdateAsync(requestIp, list =>
+                        {
+                            // You might want to clear existing data if necessary.
+                            list.Add(summary);
+                        });
+                    }
+                }
+
+                // Load SummaryByIp data.
+                foreach (var kvp in dumpData.SummaryByIp)
+                {
+                    string requestIp = kvp.Key;
+                    var summary = kvp.Value;
+                    await _summaryByIp.SetAsync(requestIp, summary);
+                }
+
+                _logger.LogInformation("Successfully loaded persisted failure point data from {FilePath}.", filePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading persisted data from file {FilePath}.", filePath);
+            }
+        }
+
+        // Used to map the JSON structure.
+        private class DumpData
+        {
+            public Dictionary<string, List<FailureSummaryBySource>> SummaryBySource { get; set; }
+            public Dictionary<string, FailureSummaryByIp> SummaryByIp { get; set; }
+        }
+
+        /// <summary>
+        /// Asynchronously dumps all stored failure summary data to a JSON file on disk.
+        /// </summary>
+        /// <param name="filePath">The file path where the JSON data should be saved.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task DumpDataToJsonAsync(string filePath)
+        {
+            var summaryBySourceSnapshot = await _summaryBySource.GetAllAsync();
+            var summaryByIpSnapshot = await _summaryByIp.GetAllAsync();
+
+            var dumpData = new
+            {
+                SummaryBySource = summaryBySourceSnapshot,
+                SummaryByIp = summaryByIpSnapshot
+            };
+
+            var jsonOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            var json = JsonSerializer.Serialize(dumpData, jsonOptions);
+
+            await File.WriteAllTextAsync(filePath, json);
+
+            _logger.LogInformation("Dumped failure point data to JSON file at {FilePath}", filePath);
         }
     }
 }

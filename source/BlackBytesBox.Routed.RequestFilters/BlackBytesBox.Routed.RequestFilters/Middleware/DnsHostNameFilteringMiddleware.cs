@@ -3,16 +3,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using System;
+using System.Net;
 using BlackBytesBox.Routed.RequestFilters.Services;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
-using System.Net;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
     /// <summary>
-    /// Middleware that filters HTTP requests based on their protocol against configured allowed protocols.
+    /// Middleware that filters HTTP requests based on DNS host name against configured allowed values.
     /// </summary>
     public class DnsHostNameFilteringMiddleware
     {
@@ -22,7 +23,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         private readonly MiddlewareFailurePointService _middlewareFailurePointService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HostNameFilteringMiddleware"/> class.
+        /// Initializes a new instance of the <see cref="DnsHostNameFilteringMiddleware"/> class.
         /// </summary>
         /// <param name="nextMiddleware">The next middleware in the pipeline.</param>
         /// <param name="logger">The logger instance.</param>
@@ -37,12 +38,12 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(DnsHostNameFilteringMiddlewareOptions));
+                _logger.LogDebug("Config updated: {Options}", nameof(DnsHostNameFilteringMiddlewareOptions));
             });
         }
 
         /// <summary>
-        /// Processes the HTTP request by validating its protocol and either forwarding the request
+        /// Processes the HTTP request by validating its DNS host name and either forwarding the request
         /// or responding with an error based on the configured rules.
         /// </summary>
         /// <param name="context">The HTTP context for the current request.</param>
@@ -50,43 +51,31 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var options = _optionsMonitor.CurrentValue;
-            string? remoteIPAddress = context.Connection.RemoteIpAddress?.ToString();
-            if (remoteIPAddress == null)
-            {
-                _logger.LogError("Request Ip: Request without IPs are not allowed.");
-                await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                return;
-            }
 
+            var remoteIPAddress = context.GetItem<string>("remoteIpAddressStr");
+            
             string? resolvedDnsName = null;
-
             try
             {
-                var iPHostEntry = Dns.GetHostEntry(remoteIPAddress);
-                resolvedDnsName = iPHostEntry.HostName;
+                var hostEntry = Dns.GetHostEntry(remoteIPAddress);
+                resolvedDnsName = hostEntry.HostName;
             }
             catch (Exception)
             {
                 resolvedDnsName = null;
             }
 
-            bool isAllowed = false;
+            bool isAllowed = resolvedDnsName != null && resolvedDnsName.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
 
-            if (resolvedDnsName != null)
-            {
-                isAllowed = resolvedDnsName.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
-            }
-
-            // Check if the request host matches any allowed host (including wildcards)
             if (isAllowed)
             {
-                _logger.LogDebug("DNS Host Name: '{ResolvedDnsName}' is allowed.", resolvedDnsName);
+                _logger.LogDebug("Allowed: DNS host '{DnsHost}'.", resolvedDnsName);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
-                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
+                await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
                     remoteIPAddress,
                     nameof(DnsHostNameFilteringMiddleware),
                     options.DisallowedFailureRating,
@@ -94,13 +83,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(HostNameFilteringMiddleware));
+                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - continuing.",resolvedDnsName);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("DNS Host Name: '{ResolvedDnsName}' is not allowed.", resolvedDnsName);
+                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - aborting.",resolvedDnsName);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

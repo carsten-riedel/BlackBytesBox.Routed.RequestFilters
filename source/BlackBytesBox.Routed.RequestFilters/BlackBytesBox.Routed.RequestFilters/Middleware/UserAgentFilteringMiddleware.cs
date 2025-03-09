@@ -8,6 +8,7 @@ using BlackBytesBox.Routed.RequestFilters.Services;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using System.Linq;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -57,35 +58,27 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("User-Agent '{UserAgent}' is permitted.", userAgentHeader);
+                _logger.LogDebug("Allowed: User-Agent '{UserAgent}'.", userAgentHeader);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Request rejected: Missing valid IP address.");
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                    context.GetItem<string>("remoteIpAddressStr"),
                     nameof(UserAgentFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet User-Agent criteria in {MiddlewareName}, but processing will continue as configured.", nameof(UserAgentFilteringMiddleware));
+                    _logger.LogDebug("Disallowed: User-Agent '{UserAgent}' - continuing.", userAgentHeader);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("User-Agent '{UserAgent}' is not permitted. Responding with status code {StatusCode}.", userAgentHeader, options.DisallowedStatusCode);
+                    _logger.LogDebug("Disallowed: User-Agent '{UserAgent}' - aborting.", userAgentHeader);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

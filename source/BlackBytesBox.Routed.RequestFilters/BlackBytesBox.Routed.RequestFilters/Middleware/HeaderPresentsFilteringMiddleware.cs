@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
+using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
+using BlackBytesBox.Routed.RequestFilters.Services;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System;
-using BlackBytesBox.Routed.RequestFilters.Services;
-using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
-using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
-using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
-using System.Linq;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -29,11 +32,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="logger">The logger instance used to record events.</param>
         /// <param name="optionsMonitor">The monitor providing middleware configuration options.</param>
         /// <param name="middlewareFailurePointService">The service used for tracking failure metrics.</param>
-        public HeaderPresentsFilteringMiddleware(
-            RequestDelegate nextMiddleware,
-            ILogger<HeaderPresentsFilteringMiddleware> logger,
-            IOptionsMonitor<HeaderPresentsFilteringMiddlewareOptions> optionsMonitor,
-            MiddlewareFailurePointService middlewareFailurePointService)
+        public HeaderPresentsFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<HeaderPresentsFilteringMiddleware> logger, IOptionsMonitor<HeaderPresentsFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;
@@ -42,7 +41,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("HeaderPresentsFilteringMiddleware configuration has been updated.");
+                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(HeaderPresentsFilteringMiddlewareOptions));
             });
         }
 
@@ -82,29 +81,21 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Decision logic: Block if any header is blacklisted.
             if (blacklistedCount > 0)
             {
-                _logger.LogDebug("Request blocked: {BlacklistedCount} header(s) matched blacklisted patterns, e.g. '{Header}'.", blacklistedCount, firstBlacklistedHeader);
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Request rejected: Unable to determine client's IP address for header validation.");
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                   context.GetItem<string>("remoteIpAddressStr"),
                     nameof(HeaderPresentsFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Continuing request processing despite blacklisted header due to configuration.");
+                    _logger.LogDebug("Disallowed: Headers {BlacklistedCount} no match  e.g. '{Headers}' - continuing.", blacklistedCount, firstBlacklistedHeader);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
+                    _logger.LogDebug("Disallowed: Headers {BlacklistedCount} no match  e.g. '{Headers}' - aborting.", blacklistedCount, firstBlacklistedHeader);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }
@@ -113,7 +104,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Allow the request if any header explicitly matches the whitelist.
             if (allowedCount > 0)
             {
-                _logger.LogDebug("Request allowed: {AllowedCount} header(s) matched whitelisted patterns, e.g. '{Header}'.", allowedCount, firstAllowedHeader);
+                _logger.LogDebug("Allowed: Headers {AllowedCount} match  e.g. '{Headers}' - aborting.", allowedCount, firstAllowedHeader);
                 await _nextMiddleware(context);
                 return;
             }

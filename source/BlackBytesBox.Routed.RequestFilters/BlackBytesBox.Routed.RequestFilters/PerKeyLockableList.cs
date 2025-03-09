@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
+using System.Linq;
 
 namespace BlackBytesBox.Routed.RequestFilters
 {
@@ -83,6 +84,43 @@ namespace BlackBytesBox.Routed.RequestFilters
                 keyLock.Release();
             }
         }
+
+        /// <summary>
+        /// Asynchronously retrieves a snapshot of all keys and their associated lists.
+        /// </summary>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a dictionary
+        /// mapping each key to a read-only snapshot of its list.
+        /// </returns>
+        /// <remarks>
+        /// This method iterates over a snapshot of the keys, acquiring each key’s lock in turn to produce a safe copy.
+        /// This approach avoids holding multiple locks concurrently, thereby reducing deadlock risks.
+        /// </remarks>
+        public async Task<Dictionary<string, IReadOnlyList<T>>> GetAllAsync()
+        {
+            var snapshot = new Dictionary<string, IReadOnlyList<T>>();
+            // Take a snapshot of the keys to prevent issues with concurrent modifications.
+            var keys = _data.Keys.ToList();
+            foreach (var key in keys)
+            {
+                var keyLock = GetLockForKey(key);
+                await keyLock.WaitAsync().ConfigureAwait(false);
+                try
+                {
+                    if (_data.TryGetValue(key, out var list))
+                    {
+                        // Copy the list to avoid exposing internal state.
+                        snapshot[key] = list.ToArray();
+                    }
+                }
+                finally
+                {
+                    keyLock.Release();
+                }
+            }
+            return snapshot;
+        }
+
 
         /// <summary>
         /// Asynchronously updates the list associated with the specified key using an asynchronous update function.
@@ -215,6 +253,41 @@ namespace BlackBytesBox.Routed.RequestFilters
                 keyLock.Release();
             }
         }
+
+        /// <summary>
+        /// Asynchronously retrieves a snapshot of all keys and their associated values.
+        /// </summary>
+        /// <returns>
+        /// A task that represents the asynchronous operation. The task result contains a dictionary
+        /// mapping each key to its stored value.
+        /// </returns>
+        /// <remarks>
+        /// Similar to the list version, this method iterates over a snapshot of keys and acquires each key’s lock
+        /// to safely copy its value. It prevents potential deadlocks by locking one key at a time.
+        /// </remarks>
+        public async Task<Dictionary<string, T>> GetAllAsync()
+        {
+            var snapshot = new Dictionary<string, T>();
+            var keys = _data.Keys.ToList();
+            foreach (var key in keys)
+            {
+                var keyLock = GetLockForKey(key);
+                await keyLock.WaitAsync().ConfigureAwait(false);
+                try
+                {
+                    if (_data.TryGetValue(key, out var value))
+                    {
+                        snapshot[key] = value;
+                    }
+                }
+                finally
+                {
+                    keyLock.Release();
+                }
+            }
+            return snapshot;
+        }
+
 
         /// <summary>
         /// Asynchronously sets the value for the specified key.

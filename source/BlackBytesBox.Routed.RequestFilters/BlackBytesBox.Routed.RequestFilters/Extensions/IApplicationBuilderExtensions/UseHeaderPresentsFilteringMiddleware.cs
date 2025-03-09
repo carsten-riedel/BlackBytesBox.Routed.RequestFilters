@@ -23,6 +23,14 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         public static IApplicationBuilder UseHeaderPresentsFilteringMiddleware(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
+
+            // Check if the RemoteIPFilteringMiddleware has already been added.
+            if (!app.GetProperty<RemoteIPFilteringMiddleware, bool>())
+            {
+                app.SetProperty<RemoteIPFilteringMiddleware, bool>(true);
+                app.UseMiddleware<RemoteIPFilteringMiddleware>();
+            }
+
             return app.UseMiddleware<HeaderPresentsFilteringMiddleware>();
         }
 
@@ -48,6 +56,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
 
             // Decorate the options monitor so that additional configuration is applied on each access.
             var decoratedOptionsMonitor = new ConfiguredOptionsMonitor<HeaderPresentsFilteringMiddlewareOptions>(innerOptionsMonitor, additionalConfigure);
+
+            // Check if the RemoteIPFilteringMiddleware has already been added.
+            if (!app.GetProperty<RemoteIPFilteringMiddleware, bool>())
+            {
+                app.SetProperty<RemoteIPFilteringMiddleware, bool>(true);
+                app.UseMiddleware<RemoteIPFilteringMiddleware>();
+            }
 
             // The middleware's constructor expects a RequestDelegate and an IOptionsMonitor of HeaderPresentsFilteringMiddlewareOptions.
             // The RequestDelegate is auto-resolved, and we supply the decorated options monitor.

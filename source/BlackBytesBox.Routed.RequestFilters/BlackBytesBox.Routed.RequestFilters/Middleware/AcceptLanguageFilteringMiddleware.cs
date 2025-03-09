@@ -1,13 +1,16 @@
-﻿using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
+using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
+using BlackBytesBox.Routed.RequestFilters.Services;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System;
-using System.Linq;
-using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
-using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
-using BlackBytesBox.Routed.RequestFilters.Services;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -31,11 +34,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="middlewareFailurePointService">
         /// The service used for tracking and recording failure points when requests do not meet configured criteria.
         /// </param>
-        public AcceptLanguageFilteringMiddleware(
-            RequestDelegate nextMiddleware,
-            ILogger<AcceptLanguageFilteringMiddleware> logger,
-            IOptionsMonitor<AcceptLanguageFilteringMiddlewareOptions> optionsMonitor,
-            MiddlewareFailurePointService middlewareFailurePointService)
+        public AcceptLanguageFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<AcceptLanguageFilteringMiddleware> logger, IOptionsMonitor<AcceptLanguageFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;
@@ -44,7 +43,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(AcceptLanguageFilteringMiddlewareOptions));
+                _logger.LogDebug("Config updated: {Options}", nameof(AcceptLanguageFilteringMiddlewareOptions));
             });
         }
 
@@ -56,49 +55,34 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task InvokeAsync(HttpContext context)
         {
-            // Retrieve current configuration options.
             var options = _optionsMonitor.CurrentValue;
+            string languageHeader = context.Request.Headers.AcceptLanguage.FirstOrDefault()?.ToString() ?? string.Empty;
 
-            // Extract the first value of the Accept-Language header (if present).
-            string? languageHeader = context.Request.Headers.AcceptLanguage.FirstOrDefault()?.ToString();
-            languageHeader ??= string.Empty;
-
-            // Validate the header against the configured whitelist and blacklist patterns.
-            var isAllowed = languageHeader.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
+            bool isAllowed = languageHeader.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
 
             if (isAllowed)
             {
-                _logger.LogDebug("Accept-Language header '{AcceptLanguage}' is allowed.", languageHeader);
+                _logger.LogDebug("Allowed: Accept-Language '{Lang}'.", languageHeader);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
-                // Retrieve the client's IP address for logging purposes.
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Request rejected: Missing valid IP address.");
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
-                // Record the failure event using the middleware failure point service.
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                    context.GetItem<string>("remoteIpAddressStr"),
                     nameof(AcceptLanguageFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Accept-Language header did not meet criteria in {MiddlewareName}, but processing will continue as configured.", nameof(AcceptLanguageFilteringMiddleware));
+                    _logger.LogDebug("Disallowed: Accept-Language '{Lang}' - continuing.",languageHeader);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Access denied: Accept-Language header '{AcceptLanguage}' is not allowed.", languageHeader);
+                    _logger.LogDebug("Disallowed: Accept-Language '{Lang}' - aborting.", languageHeader);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

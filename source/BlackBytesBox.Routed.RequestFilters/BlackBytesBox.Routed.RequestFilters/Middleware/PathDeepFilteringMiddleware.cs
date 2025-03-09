@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
@@ -23,7 +24,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         private readonly MiddlewareFailurePointService _middlewareFailurePointService;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HostNameFilteringMiddleware"/> class.
+        /// Initializes a new instance of the <see cref="PathDeepFilteringMiddleware"/> class.
         /// </summary>
         /// <param name="nextMiddleware">The next middleware in the pipeline.</param>
         /// <param name="logger">The logger instance.</param>
@@ -38,7 +39,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(PathDeepFilteringMiddlewareOptions));
+                _logger.LogDebug("Config updated: {Options}", nameof(PathDeepFilteringMiddlewareOptions));
             });
         }
 
@@ -53,43 +54,33 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
 
             var requestPath = context.Request.Path.ToString();
-            _logger.LogDebug("RequestPath {path}", context.Request.Path);
             var pathDepth = CalculatePathDepth(requestPath);
 
             var isAllowed = options.PathDeepLimit >= pathDepth;
 
-            // Check if the request host matches any allowed host (including wildcards)
             if (isAllowed)
             {
-                _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is allowed.", pathDepth);
+                _logger.LogDebug("Allowed: depth {Depth} on {Path}.", pathDepth, requestPath);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Request rejected: Missing valid IP address.");
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                    context.GetItem<string>("remoteIpAddressStr"),
                     nameof(PathDeepFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request did not meet protocol criteria in {MiddlewareName}, but processing will continue as configured.", nameof(HostNameFilteringMiddleware));
+                    _logger.LogDebug("Disallowed: depth {Depth} on {Path} - continuing.", pathDepth, requestPath);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Pathdeep: a path deep of {pathDepth} is not allowed.", pathDepth);
+                    _logger.LogDebug("Disallowed depth {Depth} on {Path} - aborting.", pathDepth, requestPath);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }
@@ -98,7 +89,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
         private int CalculatePathDepth(string path)
         {
-            var normalizedPath =path.TrimSpecific('/', 1, 1);
+            var normalizedPath = path.TrimSpecific('/', 1, 1);
             if (String.IsNullOrEmpty(normalizedPath))
             {
                 return 0;

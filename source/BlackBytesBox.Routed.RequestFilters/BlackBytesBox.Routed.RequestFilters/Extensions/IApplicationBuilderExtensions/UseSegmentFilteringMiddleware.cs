@@ -19,9 +19,18 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// </summary>
         /// <param name="app">The application builder.</param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="app"/> is null.</exception>
         public static IApplicationBuilder UseSegmentFilteringMiddleware(this IApplicationBuilder app)
         {
             if (app == null) throw new ArgumentNullException(nameof(app));
+
+            // Check if the RemoteIPFilteringMiddleware has already been added.
+            if (!app.GetProperty<RemoteIPFilteringMiddleware, bool>())
+            {
+                app.SetProperty<RemoteIPFilteringMiddleware, bool>(true);
+                app.UseMiddleware<RemoteIPFilteringMiddleware>();
+            }
+
             return app.UseMiddleware<SegmentFilteringMiddleware>();
         }
 
@@ -30,8 +39,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
         /// The extra configuration is applied on top of the DI‑registered options (which are auto‑refreshed if appsettings change).
         /// </summary>
         /// <param name="app">The application builder.</param>
-        /// <param name="additionalConfigure">A delegate to apply extra configuration to <see cref="SegmentFilteringMiddlewareOptions"/>.</param>
+        /// <param name="additionalConfigure">
+        /// A delegate to apply extra configuration to <see cref="SegmentFilteringMiddlewareOptions"/>.
+        /// </param>
         /// <returns>The updated application builder.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="app"/> or <paramref name="additionalConfigure"/> is null.
+        /// </exception>
         public static IApplicationBuilder UseSegmentFilteringMiddleware(this IApplicationBuilder app, Action<SegmentFilteringMiddlewareOptions> additionalConfigure)
         {
             if (app == null)
@@ -44,6 +58,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExte
 
             // Decorate the options monitor so that additional configuration is applied on each access.
             var decoratedOptionsMonitor = new ConfiguredOptionsMonitor<SegmentFilteringMiddlewareOptions>(innerOptionsMonitor, additionalConfigure);
+
+            // Check if the RemoteIPFilteringMiddleware has already been added.
+            if (!app.GetProperty<RemoteIPFilteringMiddleware, bool>())
+            {
+                app.SetProperty<RemoteIPFilteringMiddleware, bool>(true);
+                app.UseMiddleware<RemoteIPFilteringMiddleware>();
+            }
 
             // The middleware's constructor expects a RequestDelegate and an IOptionsMonitor of SegmentFilteringMiddlewareOptions.
             // The RequestDelegate is auto-resolved, and we supply our decorated options monitor.

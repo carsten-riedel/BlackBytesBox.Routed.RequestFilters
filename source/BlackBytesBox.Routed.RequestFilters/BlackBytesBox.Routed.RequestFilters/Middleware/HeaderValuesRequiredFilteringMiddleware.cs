@@ -46,7 +46,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} updated.", nameof(HeaderValuesRequiredFilteringMiddleware));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(HeaderValuesRequiredFilteringMiddleware));
             });
         }
 
@@ -88,8 +88,9 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Request allowed: All required headers validated successfully.");
+                _logger.LogDebug("Allowed: All required headers validated successfully. - continuing.");
                 await _nextMiddleware(context);
+                return;
             }
             else
             {
@@ -101,13 +102,15 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Request disallowed: Missing or invalid header(s), but continuing due to configuration.");
+                    _logger.LogDebug("Disallowed: Missing or invalid header(s) - continuing.");
                     await _nextMiddleware(context);
+                    return;
                 }
                 else
                 {
-                    _logger.LogDebug("Request disallowed: Missing or invalid header(s), aborting execution.");
+                    _logger.LogDebug("Disallowed: Missing or invalid header(s) - aborting.");
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
+                    return;
                 }
             }
         }

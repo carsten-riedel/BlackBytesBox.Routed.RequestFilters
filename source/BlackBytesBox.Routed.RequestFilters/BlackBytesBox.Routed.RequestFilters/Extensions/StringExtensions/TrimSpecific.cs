@@ -3,7 +3,7 @@
     /// <summary>
     /// Provides extension methods for the <see cref="string"/> class.
     /// </summary>
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         /// <summary>
         /// Trims occurrences of a specified character from the start and end of the string up to a defined count.

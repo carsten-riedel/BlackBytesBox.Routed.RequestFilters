@@ -41,7 +41,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(HeaderPresentsFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(HeaderPresentsFilteringMiddleware));
             });
         }
 
@@ -104,13 +104,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Allow the request if any header explicitly matches the whitelist.
             if (allowedCount > 0)
             {
-                _logger.LogDebug("Allowed: Headers {AllowedCount} match  e.g. '{Headers}' - aborting.", allowedCount, firstAllowedHeader);
+                _logger.LogDebug("Allowed: Headers {AllowedCount} match  e.g. '{Headers}' - continuing.", allowedCount, firstAllowedHeader);
                 await _nextMiddleware(context);
                 return;
             }
 
             // If no header qualifies, deny the request.
-            _logger.LogDebug("Request denied: No header matched the allowed patterns.");
+            _logger.LogDebug("Request denied: No header matched the allowed patterns. - aborting.");
             await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
         }
     }

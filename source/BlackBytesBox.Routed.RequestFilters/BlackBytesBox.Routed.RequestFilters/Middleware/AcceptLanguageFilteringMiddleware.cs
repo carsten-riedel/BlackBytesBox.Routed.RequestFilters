@@ -43,7 +43,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Config updated: {Options}", nameof(AcceptLanguageFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(AcceptLanguageFilteringMiddleware));
             });
         }
 
@@ -62,7 +62,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: Accept-Language '{Lang}'.", languageHeader);
+                _logger.LogDebug("Allowed: Accept-Language '{Lang}' - continuing.", languageHeader);
                 await _nextMiddleware(context);
                 return;
             }

@@ -14,6 +14,7 @@ What's New & Improved?
 - Active core development with ongoing refinements.
 - Initial groundwork for future stable releases.
 - Hostname Filtering: Added case sensitivity option for hostname filtering in response to real-world observations.
+- Debug logging harmonization: Improved consistency and clarity in debug log messages.
 
 Third-Party Notices
 --------------------

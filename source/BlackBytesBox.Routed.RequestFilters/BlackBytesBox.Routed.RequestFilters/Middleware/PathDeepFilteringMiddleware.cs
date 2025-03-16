@@ -39,7 +39,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Config updated: {Options}", nameof(PathDeepFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(PathDeepFilteringMiddleware));
             });
         }
 
@@ -60,7 +60,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: depth {Depth} on {Path}.", pathDepth, requestPath);
+                _logger.LogDebug("Allowed: depth {Depth} on {Path} - continuing.", pathDepth, requestPath);
                 await _nextMiddleware(context);
                 return;
             }

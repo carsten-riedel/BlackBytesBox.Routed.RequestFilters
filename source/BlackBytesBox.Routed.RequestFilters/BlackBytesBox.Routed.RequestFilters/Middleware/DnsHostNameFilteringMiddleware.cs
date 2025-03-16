@@ -38,7 +38,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Config updated: {Options}", nameof(DnsHostNameFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(DnsHostNameFilteringMiddleware));
             });
         }
 
@@ -69,7 +69,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: DNS host '{DnsHost}'.", resolvedDnsName);
+                _logger.LogDebug("Allowed: DNS host '{DnsHost}' - continuing.", resolvedDnsName);
                 await _nextMiddleware(context);
                 return;
             }

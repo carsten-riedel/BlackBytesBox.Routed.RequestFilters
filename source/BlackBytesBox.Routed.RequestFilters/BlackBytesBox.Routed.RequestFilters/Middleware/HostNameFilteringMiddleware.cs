@@ -40,7 +40,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Config updated: {Options}", nameof(HostNameFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(HostNameFilteringMiddleware));
             });
         }
 
@@ -68,7 +68,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: host '{Host}'.", host.Host);
+                _logger.LogDebug("Allowed: host '{Host}' - continuing.", host.Host);
                 await _nextMiddleware(context);
                 return;
             }

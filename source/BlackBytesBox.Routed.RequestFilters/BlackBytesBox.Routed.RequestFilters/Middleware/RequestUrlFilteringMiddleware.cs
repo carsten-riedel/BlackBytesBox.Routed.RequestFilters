@@ -60,7 +60,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(RequestUrlFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(RequestUrlFilteringMiddleware));
             });
         }
 
@@ -94,7 +94,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: requestUrl '{Request}'.", uriPath);
+                _logger.LogDebug("Allowed: requestUrl '{Request}' - continuing.", uriPath);
                 await _nextMiddleware(context);
                 return;
             }

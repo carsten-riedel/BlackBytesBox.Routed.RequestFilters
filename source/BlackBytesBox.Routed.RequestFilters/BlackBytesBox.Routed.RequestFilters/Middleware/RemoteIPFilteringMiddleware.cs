@@ -39,7 +39,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(RemoteIPFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(RemoteIPFilteringMiddleware));
             });
         }
 
@@ -56,7 +56,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             System.Net.IPAddress? remoteIpAddress = context.Connection.RemoteIpAddress;
             if (remoteIpAddress == null)
             {
-                _logger.LogError("Request rejected: Missing valid IP address.");
+                _logger.LogError("Request rejected: Missing valid IP address. - aborting.");
                 await context.Response.WriteDefaultStatusCodeAnswer(_optionsMonitor.CurrentValue.DisallowedStatusCode);
                 return;
             }
@@ -64,10 +64,10 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             string remoteIpAddressStr = remoteIpAddress.ToString();
 
             bool isAllowed = remoteIpAddressStr.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
-            
+
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: RemoteIpAddress '{Protocol}'.", remoteIpAddressStr);
+                _logger.LogDebug("Allowed: RemoteIpAddress '{Protocol}' - continuing.", remoteIpAddressStr);
                 context.SetItem("remoteIpAddressStr", remoteIpAddressStr);
                 await _nextMiddleware(context);
                 return;
@@ -94,10 +94,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                     return;
                 }
             }
-
-
-
-
         }
     }
 }

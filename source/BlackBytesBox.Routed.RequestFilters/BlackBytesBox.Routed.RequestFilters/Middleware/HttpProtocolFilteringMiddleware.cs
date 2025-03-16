@@ -39,7 +39,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Config updated: {Options}", nameof(HttpProtocolFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(HttpProtocolFilteringMiddleware));
             });
         }
 
@@ -58,7 +58,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: protocol '{Protocol}'.", protocol);
+                _logger.LogDebug("Allowed: protocol '{Protocol}' - continuing.", protocol);
                 await _nextMiddleware(context);
                 return;
             }

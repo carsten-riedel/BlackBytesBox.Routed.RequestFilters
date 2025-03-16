@@ -29,7 +29,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="logger">The logger instance for recording middleware operations.</param>
         /// <param name="optionsMonitor">The options monitor for retrieving the middleware configuration.</param>
         /// <param name="middlewareFailurePointService">The service used for tracking failure points when filtering fails.</param>
-        public UserAgentFilteringMiddleware(RequestDelegate nextMiddleware,  ILogger<UserAgentFilteringMiddleware> logger, IOptionsMonitor<UserAgentFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
+        public UserAgentFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<UserAgentFilteringMiddleware> logger, IOptionsMonitor<UserAgentFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;
@@ -38,7 +38,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(UserAgentFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(UserAgentFilteringMiddleware));
             });
         }
 
@@ -58,7 +58,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: User-Agent '{UserAgent}'.", userAgentHeader);
+                _logger.LogDebug("Allowed: User-Agent '{UserAgent}' - continuing.", userAgentHeader);
                 await _nextMiddleware(context);
                 return;
             }

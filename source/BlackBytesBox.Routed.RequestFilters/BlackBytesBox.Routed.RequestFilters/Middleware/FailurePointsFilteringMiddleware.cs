@@ -42,7 +42,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
-                _logger.LogDebug("Configuration for {OptionsName} has been updated.", nameof(FailurePointsFilteringMiddlewareOptions));
+                _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(FailurePointsFilteringMiddleware));
             });
 
 
@@ -117,7 +117,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: IP '{RequestIp}' with {Failures} failures.", requestIp, failures);
+                _logger.LogDebug("Allowed: IP '{RequestIp}' with {Failures} failures - continuing.", requestIp, failures);
                 await _nextMiddleware(context);
                 return;
             }
@@ -131,7 +131,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 }
                 else
                 {
-                    _logger.LogDebug("Blocked: IP '{RequestIp}' with {Failures} failure points.", requestIp, failures);
+                    _logger.LogDebug("Blocked: IP '{RequestIp}' with {Failures} failure points  - aborting.", requestIp, failures);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

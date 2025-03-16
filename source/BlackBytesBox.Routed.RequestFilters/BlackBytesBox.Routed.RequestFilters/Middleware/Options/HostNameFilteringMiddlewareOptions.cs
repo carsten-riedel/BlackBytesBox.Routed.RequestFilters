@@ -5,8 +5,8 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware.Options
     public class HostNameFilteringMiddlewareOptions
     {
         public string FilterPriority { get; set; } = "Whitelist";
-        public string[]? Whitelist { get; set; } = new string[] { "*.localhost", "localhost" };
-        public string[]? Blacklist { get; set; } =  new string[] { "*" };
+        public string[]? Whitelist { get; set; }
+        public string[]? Blacklist { get; set; } 
         public bool CaseSensitive { get; set; } = true;
         public int BlacklistStatusCode { get; set; } = StatusCodes.Status403Forbidden;
         public int BlacklistFailureRating { get; set; } = 1;

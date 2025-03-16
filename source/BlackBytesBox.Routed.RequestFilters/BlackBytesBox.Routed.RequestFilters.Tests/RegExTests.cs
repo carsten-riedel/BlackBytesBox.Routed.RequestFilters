@@ -70,8 +70,8 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
         {
 
 
-            var result = StringUtility.MatchesAnyPattern(testString, pattern, true);
-            Assert.AreEqual(expected, result, $"Failed for input: '{testString}'");
+            StringUtility.PatternMatchResult result = StringUtility.MatchesAnyPattern(testString, pattern, true);
+            Assert.AreEqual(expected, result.IsMatch, $"Failed for input: '{testString}'");
 
             await Task.CompletedTask;
         }

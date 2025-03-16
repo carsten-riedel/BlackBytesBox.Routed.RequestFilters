@@ -73,8 +73,5 @@
 	<ItemGroup>
 		<None Include="Extensions\IApplicationBuilderExtensions\UseHeaderValuesRequiredFilteringMiddleware.cs" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="NewFolder\" />
-	</ItemGroup>
 
 </Project>

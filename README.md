@@ -56,6 +56,24 @@ app.UseRequestUrlFilteringMiddleware();
 
 ### Configuration Examples
 
+#### HostName Filter
+
+```json
+  "HostNameFilteringMiddlewareOptions": {
+    "FilterPriority": "Whitelist",
+    "Whitelist": [ "localhost", "*.localhost", "h123456.server.net", "*.h123456.server.net", "domain.com", "*.domain.com" ],
+    "Blacklist": [ "*" ],
+    "CaseSensitive": true,
+    "BlacklistStatusCode": 400,
+    "BlacklistFailureRating": 1,
+    "BlacklistContinue": true,
+    "NotMatchedStatusCode": 400,
+    "NotMatchedFailureRating": 0,
+    "NotMatchedContinue": true,
+    "NotMatchedLogWarning": true
+  },
+```
+
 #### Accept Language Filter
 
 ```json

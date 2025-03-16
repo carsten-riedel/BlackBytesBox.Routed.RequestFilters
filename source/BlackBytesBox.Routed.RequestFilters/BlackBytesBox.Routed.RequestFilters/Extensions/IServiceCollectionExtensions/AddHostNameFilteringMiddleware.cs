@@ -1,6 +1,7 @@
 ﻿using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Services;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -110,12 +111,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         {
             return services.AddHostNameFilteringMiddleware(configuration =>
             {
-                configuration.Whitelist = new[] { "*.localhost", "localhost", "h2885997.stratoserver.net", "*.h2885997.stratoserver.net", "critforge.com", "*.critforge.com" };
-                configuration.Blacklist = new[] { "*" };
-                configuration.CaseSensitive = false;
-                configuration.DisallowedStatusCode = 400;
-                configuration.DisallowedFailureRating = 10;
-                configuration.ContinueOnDisallowed = true;
+                configuration.FilterPriority = "Whitelist";
+                configuration.Whitelist = new string[] { "*.localhost", "localhost" };
+                configuration.Blacklist = new string[] { "*" };
+                configuration.CaseSensitive = true;
+                configuration.BlacklistStatusCode = StatusCodes.Status403Forbidden;
+                configuration.BlacklistFailureRating = 1;
+                configuration.BlacklistContinue = true;
+                configuration.NotMatchedStatusCode = StatusCodes.Status403Forbidden;
+                configuration.NotMatchedFailureRating = 0;
+                configuration.NotMatchedContinue = true;
+                configuration.NotMatchedLogWarning = true;
             });
         }
     }

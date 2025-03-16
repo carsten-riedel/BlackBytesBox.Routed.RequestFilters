@@ -10,6 +10,7 @@ using BlackBytesBox.Routed.RequestFilters.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace BlackBytesBox.Routed.RequestFilters.Tests
 {
@@ -28,6 +29,10 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
 
             // Set a fixed URL for the host.
             builder.WebHost.UseUrls("https://localhost:5425");
+
+            builder.Logging.AddDebug();
+            builder.Logging.SetMinimumLevel(LogLevel.Trace);
+
 
             // Optionally, add a separate JSON configuration file (for example, myMiddlewareConfig.json)
             // Uncomment the following line if you want to load a separate config file:

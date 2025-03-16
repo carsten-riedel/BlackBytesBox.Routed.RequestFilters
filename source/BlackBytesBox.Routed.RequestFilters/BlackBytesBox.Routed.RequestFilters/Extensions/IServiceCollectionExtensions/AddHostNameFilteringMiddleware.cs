@@ -112,6 +112,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
             {
                 configuration.Whitelist = new[] { "*.localhost", "localhost", "h2885997.stratoserver.net", "*.h2885997.stratoserver.net", "critforge.com", "*.critforge.com" };
                 configuration.Blacklist = new[] { "*" };
+                configuration.CaseSensitive = false;
                 configuration.DisallowedStatusCode = 400;
                 configuration.DisallowedFailureRating = 10;
                 configuration.ContinueOnDisallowed = true;

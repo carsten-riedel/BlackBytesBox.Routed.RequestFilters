@@ -16,7 +16,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
         /// <param name="input">The input string to be matched.</param>
         /// <param name="pattern">The pattern string, where '*' matches any number of characters and '?' matches one.</param>
         /// <returns>True if the input matches the pattern; otherwise, false.</returns>
-        private static bool IsRegExMatch(string? input, string? pattern)
+        private static bool IsRegExMatch(string? input, string? pattern, RegexOptions regexOptions = RegexOptions.IgnoreCase)
         {
             if (input == null || pattern == null)
             {
@@ -31,7 +31,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
             }
 
             var regexPattern = "^" + Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".?") + "$";
-            return Regex.IsMatch(input, regexPattern, RegexOptions.IgnoreCase);
+            return Regex.IsMatch(input, regexPattern, regexOptions);
         }
 
         /// <summary>
@@ -40,16 +40,22 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
         /// <param name="input">The input string to be matched.</param>
         /// <param name="patterns">A list of patterns to match against the input.</param>
         /// <returns>True if any pattern matches the input; otherwise, false.</returns>
-        public static bool MatchesAnyPattern(string? input, List<string>? patterns)
+        public static bool MatchesAnyPattern(string? input, List<string>? patterns, bool ignoreCase = true)
         {
             if (patterns == null || patterns.Count == 0)
             {
                 return false;
             }
 
+            RegexOptions regexOptions = RegexOptions.None;
+            if (ignoreCase)
+            {
+                regexOptions = RegexOptions.IgnoreCase;
+            }
+
             foreach (var pattern in patterns)
             {
-                if (IsRegExMatch(input, pattern))
+                if (IsRegExMatch(input, pattern, regexOptions))
                 {
                     return true;
                 }
@@ -64,16 +70,22 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
         /// <param name="input">The input string to be matched.</param>
         /// <param name="patterns">A list of patterns to match against the input.</param>
         /// <returns>True if any pattern matches the input; otherwise, false.</returns>
-        public static bool MatchesAnyPattern(string? input, string[]? patterns)
+        public static bool MatchesAnyPattern(string? input, string[]? patterns, bool ignoreCase = true)
         {
             if (patterns == null || patterns.Length == 0)
             {
                 return false;
             }
 
+            RegexOptions regexOptions = RegexOptions.None;
+            if (ignoreCase)
+            {
+                regexOptions = RegexOptions.IgnoreCase;
+            }
+
             foreach (var pattern in patterns)
             {
-                if (IsRegExMatch(input, pattern))
+                if (IsRegExMatch(input, pattern, regexOptions))
                 {
                     return true;
                 }
@@ -82,16 +94,14 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
             return false;
         }
 
-        public static bool MatchesAnyPattern(this string? input, IEnumerable<string>? patterns)
+        public static bool MatchesAnyPattern(this string? input, IEnumerable<string>? patterns,bool ignoreCase = true)
         {
-            return MatchesAnyPattern(input, patterns?.ToList());
+            return MatchesAnyPattern(input, patterns?.ToList(),ignoreCase);
         }
 
-        public static bool MatchesAnyPattern(this string? input, string pattern)
+        public static bool MatchesAnyPattern(this string? input, string pattern, bool ignoreCase = true)
         {
-
-                return input.MatchesAnyPattern(new List<string>() { pattern });
-
+            return input.MatchesAnyPattern(new List<string>() { pattern },ignoreCase);
         }
 
         /// <summary>
@@ -105,16 +115,16 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
         /// the method returns false, indicating that the operation should be halted.</param>
         /// <returns>True if the operation should continue (either by passing a whitelist check or not failing a blacklist check),
         /// or false if the string matches a blacklist pattern and should be halted.</returns>
-        public static bool ValidateWhitelistBlacklist(this string input, List<string>? whitelist = null, List<string>? blacklist = null)
+        public static bool ValidateWhitelistBlacklist(this string input, List<string>? whitelist = null, List<string>? blacklist = null, bool ignoreCase = true)
         {
             // Utilize the ValidateWhitelistBlacklist method directly
-            return InternalValidateWhitelistBlacklist(input, whitelist, blacklist);
+            return InternalValidateWhitelistBlacklist(input, whitelist, blacklist, ignoreCase);
         }
 
-        public static bool ValidateWhitelistBlacklist(this string input, IEnumerable<string>? whitelist = null, IEnumerable<string>? blacklist = null)
+        public static bool ValidateWhitelistBlacklist(this string input, IEnumerable<string>? whitelist = null, IEnumerable<string>? blacklist = null, bool ignoreCase = true)
         {
             // Utilize the ValidateWhitelistBlacklist method directly
-            return InternalValidateWhitelistBlacklist(input, whitelist?.ToList(), blacklist?.ToList());
+            return InternalValidateWhitelistBlacklist(input, whitelist?.ToList(), blacklist?.ToList(), ignoreCase);
         }
 
         /// <summary>
@@ -129,12 +139,12 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
         /// the function returns false, indicating that the operation should be halted.</param>
         /// <returns>True if the operation should continue (either by passing a whitelist check or not failing a blacklist check),
         /// or false if the input matches a blacklist pattern and should be halted.</returns>
-        private static bool InternalValidateWhitelistBlacklist(string input, List<string>? whitelist = null, List<string>? blacklist = null)
+        private static bool InternalValidateWhitelistBlacklist(string input, List<string>? whitelist = null, List<string>? blacklist = null, bool ignoreCase = true)
         {
             // Check against the whitelist if it is provided
             if (whitelist != null)
             {
-                var whitelistResult = MatchesAnyPattern(input, whitelist);
+                var whitelistResult = MatchesAnyPattern(input, whitelist, ignoreCase);
                 if (whitelistResult)
                 {
                     // The input matches a whitelist pattern; continue the operation
@@ -145,7 +155,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
             // If the input does not match any whitelist pattern or no whitelist is provided, check the blacklist
             if (blacklist != null)
             {
-                var blacklistResult = MatchesAnyPattern(input, blacklist);
+                var blacklistResult = MatchesAnyPattern(input, blacklist, ignoreCase);
                 // If the input matches a blacklist pattern, halt the operation
                 return !blacklistResult;
             }
@@ -153,6 +163,5 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions
             // If no lists are provided or no matches found in blacklist, continue the operation
             return true;
         }
-
     }
 }

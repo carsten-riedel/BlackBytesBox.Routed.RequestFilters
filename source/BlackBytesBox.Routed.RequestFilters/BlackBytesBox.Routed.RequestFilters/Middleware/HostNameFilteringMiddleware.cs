@@ -55,7 +55,17 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
             var host = context.Request.Host;
 
-            bool isAllowed = host.Host.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
+            bool isAllowed;
+            if (options.CaseSensitive == false)
+            {
+                isAllowed = host.Host.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist,true);
+            }
+            else
+            {
+                isAllowed = host.Host.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist,false);
+            }
+
+            
             if (isAllowed)
             {
                 _logger.LogDebug("Allowed: host '{Host}'.", host.Host);

@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BlackBytesBox.Routed.RequestFilters.Tests
 {
     [TestClass]
-    public sealed class ExtensionsTests
+    public sealed class RegExTests
     {
         [ClassInitialize]
         public static async Task ClassInit(TestContext context)

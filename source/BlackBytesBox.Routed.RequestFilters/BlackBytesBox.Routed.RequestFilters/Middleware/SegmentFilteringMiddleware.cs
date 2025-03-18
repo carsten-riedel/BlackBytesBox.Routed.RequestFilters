@@ -10,6 +10,8 @@ using System.Linq;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using Microsoft.AspNetCore.Http.Extensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
+using BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility;
+using Microsoft.Extensions.Hosting;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -59,34 +61,26 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var options = _optionsMonitor.CurrentValue;
-            var fullUri = GetFullRequestUri(context);
+            var fullUri = HttpContextUtility.GetUriFromRequestDisplayUrl(context, _logger);
 
             // If fullUri is null, treat it as not allowed.
             if (fullUri == null)
             {
-                _logger.LogError("Failed to build full request URI. Defaulting to request denial.");
-                string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(requestIp))
-                {
-                    _logger.LogError("Request rejected: Unable to determine client's IP address for URI segment validation.");
-                    await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
-                    return;
-                }
-
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    requestIp,
+                    context.GetItem<string>("remoteIpAddressStr"),
                     nameof(SegmentFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Continuing request processing despite URI build failure, per configuration.");
+                    _logger.LogDebug("NotPharsed continue: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
+                    _logger.LogDebug("NotPharsed aborting: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }
@@ -148,46 +142,6 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // If no segment qualifies, deny the request.
             _logger.LogDebug("Disallowed: Segment no allowed or disallowed patterns.- aborting.");
             await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
-        }
-
-        /// <summary>
-        /// Builds the complete URI from the request components.
-        /// </summary>
-        /// <param name="context">The HTTP context containing the request.</param>
-        /// <returns>
-        /// The full URI of the request if successfully constructed; otherwise, <c>null</c>.
-        /// </returns>
-        public Uri? GetFullRequestUri(HttpContext context)
-        {
-            try
-            {
-                var request = context.Request;
-
-                // Validate the essential components of the request URI.
-                if (string.IsNullOrEmpty(request.Scheme) || string.IsNullOrEmpty(request.Host.Host))
-                {
-                    _logger.LogError("Invalid request: Missing scheme or host.");
-                    return null;
-                }
-
-                // Build the full URI from the request's scheme, host, port, path, and query string.
-                var uriBuilder = new UriBuilder
-                {
-                    Scheme = request.Scheme,
-                    Host = request.Host.Host,
-                    Port = request.Host.Port ?? -1, // Use default port if not specified.
-                    Path = request.PathBase.Add(request.Path).ToString(),
-                    Query = request.QueryString.ToString()
-                };
-
-                return uriBuilder.Uri;
-            }
-            catch (Exception ex)
-            {
-                // Log the exception and return null so filtering logic treats the request as not allowed.
-                _logger.LogDebug(ex, "Failed to build full request URI. {DisplayUrl}", context.Request.GetDisplayUrl());
-                return null;
-            }
         }
     }
 }

@@ -124,13 +124,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             
             if (options.NotMatchedContinue)
             {
-                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched continue: host '{Host}' did not match any whitelist or blacklist patterns. Continuing request processing.",host);
+                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched continue: host '{Host}' did not match any whitelist or blacklist patterns.",host);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
-                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched aborting: host '{Host}' did not match any whitelist or blacklist patterns. Aborting request processing.", host);
+                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched aborting: host '{Host}' did not match any whitelist or blacklist patterns.", host);
                 await context.Response.WriteDefaultStatusCodeAnswer(options.NotMatchedStatusCode);
                 return;
             }

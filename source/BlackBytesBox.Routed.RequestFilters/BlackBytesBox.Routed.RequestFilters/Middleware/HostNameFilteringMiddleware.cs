@@ -67,11 +67,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
             var host = context.Request.Host.Host;
 
-            PatternMatchResult isWhitelist = host.MatchesAnyPatternNew(options.Whitelist, options.CaseSensitive);
-            PatternMatchResult isBlacklist = host.MatchesAnyPatternNew(options.Blacklist, options.CaseSensitive);
-
+            PatternMatchResult isWhitelist = host.MatchesAnyPatternNew(options.Whitelist, !options.CaseSensitive);
+            PatternMatchResult isBlacklist = host.MatchesAnyPatternNew(options.Blacklist, !options.CaseSensitive);
+            bool NotMatched = (!isWhitelist.IsMatch && !isBlacklist.IsMatch);
             // Check if the host matches any of the configured patterns.
-            if (!isWhitelist.IsMatch && !isBlacklist.IsMatch)
+            if (NotMatched)
             {
                 await NotMatchedAsync(context, options, host);
                 return;

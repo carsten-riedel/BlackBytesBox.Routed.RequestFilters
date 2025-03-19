@@ -66,6 +66,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
         [DataRow(null, new string?[] { null, "" , "*" , "test" }, true)]
         [DataRow("", new string?[] { null, "", "*", "test" }, true)]
         [DataRow("foo", new string?[]{"*f*" , "*o" , "o"}, true)]
+        [DataRow("CRITFORGE.COM", new string?[] { "critforge.com", }, true)]
         public async Task IsRegExMatchIntegrationArray(string? testString, string?[]? pattern, bool expected)
         {
 

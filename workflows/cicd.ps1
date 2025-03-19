@@ -130,6 +130,7 @@ foreach ($projectFile in $solutionProjectsObj) {
 
     $commonProjectParameters = @(
         "--verbosity","minimal",
+		"-p:""Deterministic=true",
         "-p:""VersionBuild=$($calculatedVersion.VersionBuild)""",
         "-p:""VersionMajor=$($calculatedVersion.VersionMajor)""",
         "-p:""VersionMinor=$($calculatedVersion.VersionMinor)""",

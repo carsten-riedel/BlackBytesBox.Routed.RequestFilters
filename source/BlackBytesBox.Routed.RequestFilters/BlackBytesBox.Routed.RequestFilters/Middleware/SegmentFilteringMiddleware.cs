@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 using BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility;
 using Microsoft.Extensions.Hosting;
+using static BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.StringUtility;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -26,6 +27,9 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         private readonly IOptionsMonitor<SegmentFilteringMiddlewareOptions> _optionsMonitor;
         private readonly MiddlewareFailurePointService _middlewareFailurePointService;
 
+        // Private property to store the filter priority.
+        private bool _whitelistFirst;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SegmentFilteringMiddleware"/> class.
         /// </summary>
@@ -33,20 +37,20 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="logger">The logger instance for recording middleware operations.</param>
         /// <param name="optionsMonitor">The monitor for retrieving the middleware configuration.</param>
         /// <param name="middlewareFailurePointService">The service used for tracking failure points when filtering fails.</param>
-        public SegmentFilteringMiddleware(
-            RequestDelegate nextMiddleware,
-            ILogger<SegmentFilteringMiddleware> logger,
-            IOptionsMonitor<SegmentFilteringMiddlewareOptions> optionsMonitor,
-            MiddlewareFailurePointService middlewareFailurePointService)
+        public SegmentFilteringMiddleware(RequestDelegate nextMiddleware,ILogger<SegmentFilteringMiddleware> logger, IOptionsMonitor<SegmentFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;
             _optionsMonitor = optionsMonitor;
             _middlewareFailurePointService = middlewareFailurePointService;
 
+            // Pre-calculate filter priority based on current options.
+            _whitelistFirst = _optionsMonitor.CurrentValue.FilterPriority.Equals("Whitelist", StringComparison.OrdinalIgnoreCase);
+
             _optionsMonitor.OnChange(updatedOptions =>
             {
                 _logger.LogDebug("Configuration for {MiddlewareName} has been updated.", nameof(SegmentFilteringMiddleware));
+                _whitelistFirst = updatedOptions.FilterPriority.Equals("Whitelist", StringComparison.OrdinalIgnoreCase);
             });
         }
 
@@ -69,79 +73,125 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
                     context.GetItem<string>("remoteIpAddressStr"),
                     nameof(SegmentFilteringMiddleware),
-                    options.DisallowedFailureRating,
+                    options.UnreadableFailureRating,
                     DateTime.UtcNow);
 
-                if (options.ContinueOnDisallowed)
+                if (options.UnreadableContinue)
                 {
-                    _logger.LogDebug("NotPharsed continue: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
+                    _logger.LogDebug("Unreadable continue: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("NotPharsed aborting: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
-                    await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
+                    _logger.LogDebug("Unreadable aborting: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
+                    await context.Response.WriteDefaultStatusCodeAnswer(options.UnreadableStatusCode);
                     return;
                 }
             }
 
-            int allowedCount = 0;
+            int whitelistedCount = 0;
             int blacklistedCount = 0;
-            string? firstAllowedSegment = null;
-            string? firstBlacklistedSegment = null;
+            PatternMatchResult firstWhitelistedSegment = new PatternMatchResult();
+            PatternMatchResult firstBlacklistedSegment = new PatternMatchResult();
 
-            // Evaluate each URI segment using regex checks for whitelist and blacklist.
-            foreach (var segment in fullUri.Segments)
+            string[]? trimmedSegments = fullUri.Segments.Select(s => Uri.UnescapeDataString(s.Trim('/'))).ToArray();
+
+            foreach (var segment in trimmedSegments)
             {
-                string trimmedSegment = Uri.UnescapeDataString(segment.Trim('/'));
+                PatternMatchResult isBlacklist = segment.MatchesAnyPatternNew(options.Blacklist, !options.CaseSensitive);
 
-                if (options.Blacklist != null && ValidationsStringExtensions.MatchesAnyPattern(trimmedSegment, options.Blacklist))
+                if (isBlacklist.IsMatch)
                 {
                     blacklistedCount++;
-                    firstBlacklistedSegment ??= trimmedSegment;
-                }
-                if (options.Whitelist != null && ValidationsStringExtensions.MatchesAnyPattern(trimmedSegment, options.Whitelist))
-                {
-                    allowedCount++;
-                    firstAllowedSegment ??= trimmedSegment;
+                    firstBlacklistedSegment ??= isBlacklist;
+                    break;
                 }
             }
 
-            // Decision logic: Block if any segment is blacklisted.
-            if (blacklistedCount > 0)
+            foreach (var segment in trimmedSegments)
             {
-                await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    context.GetItem<string>("remoteIpAddressStr"),
-                    nameof(SegmentFilteringMiddleware),
-                    options.DisallowedFailureRating,
-                    DateTime.UtcNow);
+                PatternMatchResult isWhitelist = segment.MatchesAnyPatternNew(options.Whitelist, !options.CaseSensitive);
 
-                if (options.ContinueOnDisallowed)
+                if (isWhitelist.IsMatch)
                 {
-                    _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - continuing.", blacklistedCount, firstBlacklistedSegment);
-                    await _nextMiddleware(context);
-                    return;
-                }
-                else
-                {
-                    _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - aborting.", blacklistedCount, firstBlacklistedSegment);
-                    await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
-                    return;
+                    whitelistedCount++;
+                    firstWhitelistedSegment ??= isWhitelist;
+                    break;
                 }
             }
 
-            // Allow the request if at least one segment explicitly matches the whitelist.
-            if (allowedCount > 0)
+            bool NotMatched = (!firstWhitelistedSegment.IsMatch && !firstBlacklistedSegment.IsMatch);
+            // Check if the host matches any of the configured patterns.
+            if (NotMatched)
             {
-                _logger.LogDebug("Allowed: Segment {AllowedCount} segment(s) matched patterns, e.g. '{Segment}'. - continuing.", allowedCount, firstAllowedSegment);
-                await _nextMiddleware(context);
+                await NotMatchedAsync(context, options, trimmedSegments);
                 return;
             }
 
-            // If no segment qualifies, deny the request.
-            _logger.LogDebug("Disallowed: Segment no allowed or disallowed patterns.- aborting.");
-            await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
+            // Use pre-calculated filter priority to decide branch.
+            if (_whitelistFirst)
+            {
+                if (firstWhitelistedSegment.IsMatch)
+                {
+                    await WhitelistedAsync(context, options, trimmedSegments, firstWhitelistedSegment);
+                    return;
+                }
+                if (firstBlacklistedSegment.IsMatch)
+                {
+                    await BlacklistedAsync(context, options, trimmedSegments, firstBlacklistedSegment);
+                    return;
+                }
+            }
+            else
+            {
+                if (firstBlacklistedSegment.IsMatch)
+                {
+                    await BlacklistedAsync(context, options, trimmedSegments, firstBlacklistedSegment);
+                    return;
+                }
+                if (firstWhitelistedSegment.IsMatch)
+                {
+                    await WhitelistedAsync(context, options, trimmedSegments, firstWhitelistedSegment);
+                    return;
+                }
+            }
+
+
+            //// Decision logic: Block if any segment is blacklisted.
+            //if (blacklistedCount > 0)
+            //{
+            //    await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
+            //        context.GetItem<string>("remoteIpAddressStr"),
+            //        nameof(SegmentFilteringMiddleware),
+            //        options.DisallowedFailureRating,
+            //        DateTime.UtcNow);
+
+            //    if (options.ContinueOnDisallowed)
+            //    {
+            //        _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - continuing.", blacklistedCount, firstBlacklistedSegment);
+            //        await _nextMiddleware(context);
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - aborting.", blacklistedCount, firstBlacklistedSegment);
+            //        await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
+            //        return;
+            //    }
+            //}
+
+            //// Allow the request if at least one segment explicitly matches the whitelist.
+            //if (allowedCount > 0)
+            //{
+            //    _logger.LogDebug("Allowed: Segment {AllowedCount} segment(s) matched patterns, e.g. '{Segment}'. - continuing.", allowedCount, firstWhitelistedSegment);
+            //    await _nextMiddleware(context);
+            //    return;
+            //}
+
+            //// If no segment qualifies, deny the request.
+            //_logger.LogDebug("Disallowed: Segment no allowed or disallowed patterns.- aborting.");
+            //await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
         }
     }
 }

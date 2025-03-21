@@ -2,10 +2,6 @@
 
 A collection of configurable middleware filters for ASP.NET Core applications. This library provides a set of reusable request filters that can be easily integrated into your web application's middleware pipeline.
 
-## Overview
-
-BlackBytesBox.Routed.RequestFilters contains various middleware filters that can be configured to handle HTTP requests in your ASP.NET Core applications. These filters can be used to implement common functionality such as request validation, transformation, and routing customization.
-
 ## Available Filters
 
 - **RemoteIPFilteringMiddleware**: Filters requests based on remote IP address. Whitelist takes precedence - if matched, request is allowed; otherwise, checks blacklist.
@@ -59,6 +55,45 @@ app.UseRequestUrlFilteringMiddleware();
 ```
 
 ### Configuration Examples
+
+#### HostName Filter
+
+```json
+  "HostNameFilteringMiddlewareOptions": {
+    "FilterPriority": "Whitelist",
+    "Whitelist": [ "localhost", "*.localhost", "h123456.server.net", "*.h123456.server.net", "domain.com", "*.domain.com" ],
+    "Blacklist": [ "*" ],
+    "CaseSensitive": true,
+    "BlacklistStatusCode": 403,
+    "BlacklistFailureRating": 1,
+    "BlacklistContinue": true,
+    "NotMatchedStatusCode": 403,
+    "NotMatchedFailureRating": 0,
+    "NotMatchedContinue": true,
+    "NotMatchedLogWarning": true
+  },
+```
+
+#### Segment Filter
+
+```json
+  "SegmentFilteringMiddlewareOptions": {
+    "FilterPriority": "Blacklist",
+    "Whitelist": [ "*" ],
+    "Blacklist": [ ".git", "cgi-bin", "cgi", "plugins", "fckeditor", "autodiscover", ".env", ".well-known", "HNAP1", "phpmyadmin", "phpunit", "windows", "..." ],
+    "CaseSensitive": true,
+    "BlacklistStatusCode": 403,
+    "BlacklistFailureRating": 1,
+    "BlacklistContinue": true,
+    "NotMatchedStatusCode": 403,
+    "NotMatchedFailureRating": 0,
+    "NotMatchedContinue": true,
+    "NotMatchedLogWarning": true,
+    "UnreadableStatusCode": 403,
+    "UnreadableFailureRating": 1,
+    "UnreadableContinue": true
+  },
+```
 
 #### Accept Language Filter
 

@@ -64,13 +64,34 @@ app.UseRequestUrlFilteringMiddleware();
     "Whitelist": [ "localhost", "*.localhost", "h123456.server.net", "*.h123456.server.net", "domain.com", "*.domain.com" ],
     "Blacklist": [ "*" ],
     "CaseSensitive": true,
-    "BlacklistStatusCode": 400,
+    "BlacklistStatusCode": 403,
     "BlacklistFailureRating": 1,
     "BlacklistContinue": true,
-    "NotMatchedStatusCode": 400,
+    "NotMatchedStatusCode": 403,
     "NotMatchedFailureRating": 0,
     "NotMatchedContinue": true,
     "NotMatchedLogWarning": true
+  },
+```
+
+#### Segment Filter
+
+```json
+  "SegmentFilteringMiddlewareOptions": {
+    "FilterPriority": "Blacklist",
+    "Whitelist": [ "*" ],
+    "Blacklist": [ ".git", "cgi-bin", "cgi", "plugins", "fckeditor", "autodiscover", ".env", ".well-known", "HNAP1", "phpmyadmin", "phpunit", "windows", "..." ],
+    "CaseSensitive": true,
+    "BlacklistStatusCode": 403,
+    "BlacklistFailureRating": 1,
+    "BlacklistContinue": true,
+    "NotMatchedStatusCode": 403,
+    "NotMatchedFailureRating": 0,
+    "NotMatchedContinue": true,
+    "NotMatchedLogWarning": true,
+    "UnreadableStatusCode": 403,
+    "UnreadableFailureRating": 1,
+    "UnreadableContinue": true
   },
 ```
 

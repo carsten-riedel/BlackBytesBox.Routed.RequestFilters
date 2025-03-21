@@ -67,11 +67,11 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
             var host = context.Request.Host.Host;
 
-            PatternMatchResult isWhitelist = host.MatchesAnyPatternNew(options.Whitelist, options.CaseSensitive);
-            PatternMatchResult isBlacklist = host.MatchesAnyPatternNew(options.Blacklist, options.CaseSensitive);
-
+            PatternMatchResult isWhitelist = host.MatchesAnyPatternNew(options.Whitelist, !options.CaseSensitive);
+            PatternMatchResult isBlacklist = host.MatchesAnyPatternNew(options.Blacklist, !options.CaseSensitive);
+            bool NotMatched = (!isWhitelist.IsMatch && !isBlacklist.IsMatch);
             // Check if the host matches any of the configured patterns.
-            if (!isWhitelist.IsMatch && !isBlacklist.IsMatch)
+            if (NotMatched)
             {
                 await NotMatchedAsync(context, options, host);
                 return;
@@ -124,13 +124,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             
             if (options.NotMatchedContinue)
             {
-                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched continue: host '{Host}' did not match any whitelist or blacklist patterns. Continuing request processing.",host);
+                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched continue: host '{Host}' did not match any whitelist or blacklist patterns.",host);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
-                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched aborting: host '{Host}' did not match any whitelist or blacklist patterns. Aborting request processing.", host);
+                _logger.Log(options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,"NotMatched aborting: host '{Host}' did not match any whitelist or blacklist patterns.", host);
                 await context.Response.WriteDefaultStatusCodeAnswer(options.NotMatchedStatusCode);
                 return;
             }

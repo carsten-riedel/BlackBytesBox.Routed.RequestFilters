@@ -28,7 +28,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             builder = WebApplication.CreateBuilder();
 
             // Set a fixed URL for the host.
-            builder.WebHost.UseUrls("https://localhost:5425");
+            builder.WebHost.UseUrls("https://localhost:5426");
             builder.Logging.AddDebug();
             builder.Logging.SetMinimumLevel(LogLevel.Trace);
 

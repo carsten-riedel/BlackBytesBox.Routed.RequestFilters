@@ -3,6 +3,7 @@
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Services;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -30,7 +31,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         /// <returns>The updated service collection.</returns>
         /// <remarks>
         /// <para>
-        /// Ensure that the configuration includes a section with the name 
+        /// Ensure that the configuration includes a section with the name
         /// "<c>SegmentFilteringMiddlewareOptions</c>". If the section is missing, default values will be used,
         /// which may not be appropriate for your environment.
         /// </para>
@@ -111,11 +112,20 @@ namespace BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExten
         {
             return services.AddSegmentFilteringMiddleware(configuration =>
             {
+                configuration.FilterPriority = "Blacklist";
                 configuration.Whitelist = new[] { "*" };
                 configuration.Blacklist = new[] { ".git", "cgi-bin", "cgi", "plugins", "fckeditor", "autodiscover", ".env", ".well-known", "HNAP1", "phpmyadmin", "phpunit", "windows", "..." };
-                configuration.DisallowedStatusCode = 400;
-                configuration.DisallowedFailureRating = 10;
-                configuration.ContinueOnDisallowed = true;
+                configuration.CaseSensitive = false;
+                configuration.BlacklistStatusCode = StatusCodes.Status403Forbidden;
+                configuration.BlacklistFailureRating = 1;
+                configuration.BlacklistContinue = true;
+                configuration.NotMatchedStatusCode = StatusCodes.Status403Forbidden;
+                configuration.NotMatchedFailureRating = 0;
+                configuration.NotMatchedContinue = true;
+                configuration.NotMatchedLogWarning = true;
+                configuration.UnreadableStatusCode = StatusCodes.Status403Forbidden;
+                configuration.UnreadableFailureRating = 1;
+                configuration.UnreadableContinue = true;
             });
         }
     }

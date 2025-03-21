@@ -37,7 +37,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         /// <param name="logger">The logger instance for recording middleware operations.</param>
         /// <param name="optionsMonitor">The monitor for retrieving the middleware configuration.</param>
         /// <param name="middlewareFailurePointService">The service used for tracking failure points when filtering fails.</param>
-        public SegmentFilteringMiddleware(RequestDelegate nextMiddleware,ILogger<SegmentFilteringMiddleware> logger, IOptionsMonitor<SegmentFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
+        public SegmentFilteringMiddleware(RequestDelegate nextMiddleware, ILogger<SegmentFilteringMiddleware> logger, IOptionsMonitor<SegmentFilteringMiddlewareOptions> optionsMonitor, MiddlewareFailurePointService middlewareFailurePointService)
         {
             _nextMiddleware = nextMiddleware;
             _logger = logger;
@@ -66,6 +66,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         {
             var options = _optionsMonitor.CurrentValue;
             var fullUri = HttpContextUtility.GetUriFromRequestDisplayUrl(context, _logger);
+            var displayUrl = context.Request.GetDisplayUrl();
 
             // If fullUri is null, treat it as not allowed.
             if (fullUri == null)
@@ -78,13 +79,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.UnreadableContinue)
                 {
-                    _logger.LogDebug("Unreadable continue: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
+                    _logger.LogDebug("Unreadable continue: Unable to parse display URL '{DisplayUrl}'.", displayUrl);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Unreadable aborting: Unable to parse display URL '{DisplayUrl}'.", context.Request.GetDisplayUrl());
+                    _logger.LogDebug("Unreadable aborting: Unable to parse display URL '{DisplayUrl}'.", displayUrl);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.UnreadableStatusCode);
                     return;
                 }
@@ -104,7 +105,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 if (isBlacklist.IsMatch)
                 {
                     blacklistedCount++;
-                    firstBlacklistedSegment ??= isBlacklist;
+                    firstBlacklistedSegment = isBlacklist;
                     break;
                 }
             }
@@ -116,7 +117,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 if (isWhitelist.IsMatch)
                 {
                     whitelistedCount++;
-                    firstWhitelistedSegment ??= isWhitelist;
+                    firstWhitelistedSegment = isWhitelist;
                     break;
                 }
             }
@@ -125,7 +126,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             // Check if the host matches any of the configured patterns.
             if (NotMatched)
             {
-                await NotMatchedAsync(context, options, trimmedSegments);
+                await NotMatchedAsync(context, options, displayUrl);
                 return;
             }
 
@@ -134,12 +135,12 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             {
                 if (firstWhitelistedSegment.IsMatch)
                 {
-                    await WhitelistedAsync(context, options, trimmedSegments, firstWhitelistedSegment);
+                    await WhitelistedAsync(context, options, displayUrl, firstWhitelistedSegment);
                     return;
                 }
                 if (firstBlacklistedSegment.IsMatch)
                 {
-                    await BlacklistedAsync(context, options, trimmedSegments, firstBlacklistedSegment);
+                    await BlacklistedAsync(context, options, displayUrl, firstBlacklistedSegment);
                     return;
                 }
             }
@@ -147,51 +148,116 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             {
                 if (firstBlacklistedSegment.IsMatch)
                 {
-                    await BlacklistedAsync(context, options, trimmedSegments, firstBlacklistedSegment);
+                    await BlacklistedAsync(context, options, displayUrl, firstBlacklistedSegment);
                     return;
                 }
                 if (firstWhitelistedSegment.IsMatch)
                 {
-                    await WhitelistedAsync(context, options, trimmedSegments, firstWhitelistedSegment);
+                    await WhitelistedAsync(context, options, displayUrl, firstWhitelistedSegment);
                     return;
                 }
             }
-
-
-            //// Decision logic: Block if any segment is blacklisted.
-            //if (blacklistedCount > 0)
-            //{
-            //    await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-            //        context.GetItem<string>("remoteIpAddressStr"),
-            //        nameof(SegmentFilteringMiddleware),
-            //        options.DisallowedFailureRating,
-            //        DateTime.UtcNow);
-
-            //    if (options.ContinueOnDisallowed)
-            //    {
-            //        _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - continuing.", blacklistedCount, firstBlacklistedSegment);
-            //        await _nextMiddleware(context);
-            //        return;
-            //    }
-            //    else
-            //    {
-            //        _logger.LogDebug("Disallowed: Segment {BlacklistedCount} no match  e.g. '{Segment}' - aborting.", blacklistedCount, firstBlacklistedSegment);
-            //        await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
-            //        return;
-            //    }
-            //}
-
-            //// Allow the request if at least one segment explicitly matches the whitelist.
-            //if (allowedCount > 0)
-            //{
-            //    _logger.LogDebug("Allowed: Segment {AllowedCount} segment(s) matched patterns, e.g. '{Segment}'. - continuing.", allowedCount, firstWhitelistedSegment);
-            //    await _nextMiddleware(context);
-            //    return;
-            //}
-
-            //// If no segment qualifies, deny the request.
-            //_logger.LogDebug("Disallowed: Segment no allowed or disallowed patterns.- aborting.");
-            //await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
         }
+
+        /// <summary>
+        /// Asynchronously handles requests for which the URL (displayUrl) does not match any whitelist or blacklist patterns.
+        /// </summary>
+        /// <remarks>
+        /// Depending on the options provided, this method logs the event and either continues processing the request
+        /// or aborts it by writing a default status code response. The <paramref name="displayUrl"/> parameter is used to log
+        /// the URL segments that were derived from the request path.
+        /// </remarks>
+        /// <param name="context">The current HTTP context of the request.</param>
+        /// <param name="options">The configuration options for segment filtering middleware.</param>
+        /// <param name="displayUrl">A string representing the combined URL segments (e.g., "/segment1/segment2/segment3").</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <example>
+        /// <code>
+        /// // Example usage:
+        /// await NotMatchedAsync(httpContext, middlewareOptions, "/segment1/segment2/segment3");
+        /// </code>
+        /// </example>
+        public async Task NotMatchedAsync(HttpContext context, SegmentFilteringMiddlewareOptions options, string displayUrl)
+        {
+            await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
+                context.GetItem<string>("remoteIpAddressStr"),
+                nameof(SegmentFilteringMiddleware),
+                options.NotMatchedFailureRating,
+                DateTime.UtcNow);
+
+            if (options.NotMatchedContinue)
+            {
+                _logger.Log(
+                    options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,
+                    "NotMatched continue: URL segments '{Segments}' did not match any whitelist or blacklist patterns.",
+                    displayUrl);
+                await _nextMiddleware(context);
+                return;
+            }
+            else
+            {
+                _logger.Log(
+                    options.NotMatchedLogWarning ? LogLevel.Warning : LogLevel.Debug,
+                    "NotMatched aborting: URL segments '{Segments}' did not match any whitelist or blacklist patterns.",
+                    displayUrl);
+                await context.Response.WriteDefaultStatusCodeAnswer(options.NotMatchedStatusCode);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously handles requests that match a blacklisted URL pattern.
+        /// </summary>
+        /// <remarks>
+        /// Depending on the provided options, this method logs the event and either continues processing the request
+        /// or aborts it by writing a default status code response. The <paramref name="displayUrl"/> parameter is used to log
+        /// the URL segments that triggered the blacklist rule.
+        /// </remarks>
+        /// <param name="context">The current HTTP context.</param>
+        /// <param name="options">The configuration options for the segment filtering middleware.</param>
+        /// <param name="displayUrl">A string representing the combined URL segments (e.g., "/segment1/segment2/segment3").</param>
+        /// <param name="firstBlacklistedSegment">The first matching blacklisted pattern result.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task BlacklistedAsync(HttpContext context, SegmentFilteringMiddlewareOptions options, string displayUrl, PatternMatchResult firstBlacklistedSegment)
+        {
+            await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
+                context.GetItem<string>("remoteIpAddressStr"),
+                nameof(SegmentFilteringMiddleware),
+                options.BlacklistFailureRating,
+                DateTime.UtcNow);
+
+            if (options.BlacklistContinue)
+            {
+                _logger.LogDebug("Blacklisted continue: URL segments '{Segments}' matched blacklisted pattern {MatchedPattern}.", displayUrl, firstBlacklistedSegment.MatchedPattern);
+                await _nextMiddleware(context);
+                return;
+            }
+            else
+            {
+                _logger.LogDebug("Blacklisted aborting: URL segments '{Segments}' matched blacklisted pattern {MatchedPattern}.", displayUrl, firstBlacklistedSegment.MatchedPattern);
+                await context.Response.WriteDefaultStatusCodeAnswer(options.BlacklistStatusCode);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously handles requests that match a whitelisted URL pattern by continuing the middleware pipeline.
+        /// </summary>
+        /// <remarks>
+        /// This method logs the event using the <paramref name="displayUrl"/> parameter and then continues processing the request
+        /// by calling the next middleware.
+        /// </remarks>
+        /// <param name="context">The current HTTP context.</param>
+        /// <param name="options">The configuration options for the segment filtering middleware.</param>
+        /// <param name="displayUrl">A string representing the combined URL segments (e.g., "/segment1/segment2/segment3").</param>
+        /// <param name="firstWhitelistedSegment">The first matching whitelisted pattern result.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task WhitelistedAsync(HttpContext context, SegmentFilteringMiddlewareOptions options, string displayUrl, PatternMatchResult firstWhitelistedSegment)
+        {
+            _logger.LogDebug("Whitelisted continue: URL segments '{Segments}' matched whitelisted pattern {MatchedPattern}.", displayUrl, firstWhitelistedSegment.MatchedPattern);
+            await _nextMiddleware(context);
+            return;
+        }
+
     }
 }

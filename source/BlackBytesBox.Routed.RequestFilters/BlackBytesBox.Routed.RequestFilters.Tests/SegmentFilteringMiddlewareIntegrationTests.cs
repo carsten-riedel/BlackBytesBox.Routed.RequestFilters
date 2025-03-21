@@ -81,7 +81,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             // Create a new, independent HttpClient for each test.
             client = new HttpClient(handler)
             {
-                BaseAddress = new Uri("https://localhost:5425"),
+                BaseAddress = new Uri("https://localhost:5426"),
                 DefaultRequestVersion = HttpVersion.Version11, // Force HTTP/1.0
             };
             // Add a default User-Agent header for testing.

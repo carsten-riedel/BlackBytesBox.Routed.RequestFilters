@@ -32,13 +32,15 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             builder.Logging.AddDebug();
             builder.Logging.SetMinimumLevel(LogLevel.Trace);
 
+            builder.Services.AddCIDRFilteringMiddleware(builder.Configuration);
             builder.Services.AddSegmentFilteringMiddleware(builder.Configuration);
             builder.Services.AddFailurePointsFilteringMiddleware(builder.Configuration);
 
             // Build the application.
             app = builder.Build();
 
-            app.UseSegmentFilteringMiddleware(); 
+            app.UseCIDRFilteringMiddleware();
+            app.UseSegmentFilteringMiddleware();
             app.UseFailurePointsFilteringMiddleware();
 
             // Define an array of URL patterns.

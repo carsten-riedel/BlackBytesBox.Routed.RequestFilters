@@ -24,7 +24,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility
                 return null;
             }
 
-            string displayUrl = context.Request.GetDisplayUrl();
+            string displayUrl = context.Request.GetEncodedUrl();
 
             if (string.IsNullOrWhiteSpace(displayUrl))
             {

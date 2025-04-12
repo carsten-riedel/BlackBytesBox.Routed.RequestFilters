@@ -61,3 +61,11 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# Force GitHub to treat .cs files as C#
+*.cs linguist-language=C#
+
+# Mark CI/CD scripts as generated so they don't affect language stats
+.github/** linguist-vendored
+workflows/** linguist-vendored
+workflows/psutility/** linguist-vendored

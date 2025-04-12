@@ -106,7 +106,6 @@ foreach ($solutionFile in $solutionFiles) {
     $solutionProjects += $currentProjects
 }
 $solutionProjectsObj = $solutionProjects | ForEach-Object { Get-Item $_ }
-
 # Get current Git user settings once before the loop
 $gitUserLocal = git config user.name
 $gitMailLocal = git config user.email
@@ -116,6 +115,8 @@ $gitTempMail = "carstenriedel@outlook.com"  # Assuming a placeholder email
 
 git config user.name $gitTempUser
 git config user.email $gitTempMail
+
+
 
 foreach ($projectFile in $solutionProjectsObj) {
 
@@ -131,9 +132,8 @@ foreach ($projectFile in $solutionProjectsObj) {
 
     $commonProjectParameters = @(
         "--verbosity","minimal",
-        "-p:""Deterministic=true",
-		"-p:""ContinuousIntegrationBuild=true",
-		"-p:""VersionBuild=$($calculatedVersion.VersionBuild)""",
+		"-p:""Deterministic=true",
+        "-p:""VersionBuild=$($calculatedVersion.VersionBuild)""",
         "-p:""VersionMajor=$($calculatedVersion.VersionMajor)""",
         "-p:""VersionMinor=$($calculatedVersion.VersionMinor)""",
         "-p:""VersionRevision=$($calculatedVersion.VersionRevision)""",

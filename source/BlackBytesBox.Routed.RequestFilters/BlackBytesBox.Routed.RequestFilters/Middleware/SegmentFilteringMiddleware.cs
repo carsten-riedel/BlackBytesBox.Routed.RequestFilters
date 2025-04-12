@@ -1,17 +1,19 @@
-﻿using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
+using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
+using BlackBytesBox.Routed.RequestFilters.Services;
+using BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility;
+
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System;
-using BlackBytesBox.Routed.RequestFilters.Services;
-using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
-using System.Linq;
-using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
-using Microsoft.AspNetCore.Http.Extensions;
-using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
-using BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility;
-using Microsoft.Extensions.Hosting;
+
 using static BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.StringUtility;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware

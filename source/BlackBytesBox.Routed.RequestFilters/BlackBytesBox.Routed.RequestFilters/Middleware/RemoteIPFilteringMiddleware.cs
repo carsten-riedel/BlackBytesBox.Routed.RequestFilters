@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using static BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware;
+
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
     /// <summary>
@@ -43,6 +45,25 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             });
         }
 
+        public enum IpVersion
+        {
+            IPv4,
+            IPv6,
+            Unknown
+        }
+
+        public class IpInfo
+        {
+            /// <summary>
+            /// The remote IP address as a string.
+            /// </summary>
+            public string RemoteIp { get; set; }
+            /// <summary>
+            /// The version of the IP address (IPv4 or IPv6).
+            /// </summary>
+            public IpVersion Version { get; set; }
+        }
+
         /// <summary>
         /// Processes the HTTP request by validating its protocol and either forwarding the request
         /// or responding with an error based on the configured rules.
@@ -54,6 +75,46 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
 
             System.Net.IPAddress? remoteIpAddress = context.Connection.RemoteIpAddress;
+
+            var ipInfo = new IpInfo();
+
+            if (remoteIpAddress != null)
+            {
+                // By default, convert the IP address to string.
+                ipInfo.RemoteIp = remoteIpAddress.ToString();
+
+                // Determine the IP version based on the AddressFamily.
+                if (remoteIpAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    ipInfo.Version = IpVersion.IPv4;
+                }
+                else if (remoteIpAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                {
+                    // Check if it is an IPv4-mapped IPv6 address.
+                    if (remoteIpAddress.IsIPv4MappedToIPv6)
+                    {
+                        ipInfo.Version = IpVersion.IPv4;
+                        // Optionally, map to IPv4 for easier processing.
+                        remoteIpAddress = remoteIpAddress.MapToIPv4();
+                        ipInfo.RemoteIp = remoteIpAddress.ToString();
+                    }
+                    else
+                    {
+                        ipInfo.Version = IpVersion.IPv6;
+                    }
+                }
+                else
+                {
+                    ipInfo.Version = IpVersion.Unknown;
+                }
+            }
+            else
+            {
+                ipInfo.RemoteIp = "Unknown";
+                ipInfo.Version = IpVersion.Unknown;
+            }
+
+
             if (remoteIpAddress == null)
             {
                 _logger.LogError("Request rejected: Missing valid IP address. - aborting.");

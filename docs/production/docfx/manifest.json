@@ -1,0 +1,761 @@
+{
+  "source_base_path": "/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/.config/docfx/build",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.Middleware.IOsVersionService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.Middleware.IOsVersionService.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.Middleware.OsVersionService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.Middleware.OsVersionService.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.Middleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.Middleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.ConfiguredOptionsMonitor-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.ConfiguredOptionsMonitor-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.DictionaryExtensions.DictionaryExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.DictionaryExtensions.DictionaryExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.DictionaryExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.DictionaryExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions.HttpContextDictionaryExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions.HttpContextDictionaryExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions.HttpResponseExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions.HttpResponseExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions.ApplicationBuilderPropertyExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions.ApplicationBuilderPropertyExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions.IApplicationBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions.IApplicationBuilderExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IApplicationBuilderExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.IServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.IServiceCollectionExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.ServiceCollectionProperties.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.ServiceCollectionProperties.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.ServiceCollectionPropertyExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.ServiceCollectionPropertyExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions.StringExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions.StringExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions.ValidationsStringExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions.ValidationsStringExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.AcceptLanguageFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.AcceptLanguageFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware.CIDRCalculator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware.CIDRCalculator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware.CIDRRangeResultClass.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware.CIDRRangeResultClass.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.DnsHostNameFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.DnsHostNameFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HeaderPresentsFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HeaderPresentsFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HostNameFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HostNameFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HttpProtocolFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.HttpProtocolFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.AcceptLanguageFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.AcceptLanguageFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.CIDRFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.CIDRFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.DnsHostNameFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.DnsHostNameFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.FailurePointsFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.FailurePointsFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HeaderFilterRule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HeaderFilterRule.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HeaderPresentsFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HeaderPresentsFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HeaderValuesRequiredFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HeaderValuesRequiredFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HostNameFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HostNameFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HttpProtocolFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.HttpProtocolFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.PathDeepFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.PathDeepFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.RemoteIPFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.RemoteIPFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.RequestUrlFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.RequestUrlFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.SegmentFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.SegmentFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.UserAgentFilteringMiddlewareOptions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.UserAgentFilteringMiddlewareOptions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.Options.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.PathDeepFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.PathDeepFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware.IpInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware.IpInfo.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware.IpVersion.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware.IpVersion.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RequestUrlFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.RequestUrlFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.UserAgentFilteringMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.UserAgentFilteringMiddleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Middleware.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.PerKeyLockable-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.PerKeyLockable-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.PerKeyLockableList-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.PerKeyLockableList-1.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.FailurePointItem.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.FailurePointItem.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.FailureSummaryByIp.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.FailureSummaryByIp.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.FailureSummaryBySource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.FailureSummaryBySource.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Services.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility.HttpContextUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility.HttpContextUtility.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.HttpContextUtility.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.RegexUtility.RegexUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.RegexUtility.RegexUtility.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.RegexUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.RegexUtility.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.StringUtility.PatternMatchResult.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.StringUtility.PatternMatchResult.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.StringUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.StringUtility.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Utility.StringUtility.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/getting-started.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/getting-started.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "docs/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "docs/introduction.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "docs/toc.yml",
+      "output": {
+        ".json": {
+          "relative_path": "docs/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/blackbytes_small.gif",
+      "output": {
+        "resource": {
+          "relative_path": "images/blackbytes_small.gif"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

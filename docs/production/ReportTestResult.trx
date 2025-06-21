@@ -1,0 +1,438 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d68eb9b6-6c46-4acf-bd9e-c213726b3edc" name="@pkrvmxyh4eaekms 2025-06-21 19:39:34" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2025-06-21T19:39:34.8933039+00:00" queuing="2025-06-21T19:39:34.8933040+00:00" start="2025-06-21T19:39:32.9933575+00:00" finish="2025-06-21T19:39:48.4300760+00:00" />
+  <TestSettings name="default" id="788d4e9f-b6de-49d7-8b79-d390aa994692">
+    <Deployment runDeploymentRoot="_pkrvmxyh4eaekms_2025-06-21_19_39_34" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1de3028f-1458-4877-8fff-016a9a30ff51" testId="eb8d22a9-258a-b1b2-581a-c04af435eac0" testName="IsRegExMatchIntegrationArray (&quot;foo&quot;,[&quot;*f*&quot;,&quot;*o&quot;,&quot;o&quot;],True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000305" startTime="2025-06-21T19:39:39.9992784+00:00" endTime="2025-06-21T19:39:39.9995795+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1de3028f-1458-4877-8fff-016a9a30ff51" />
+    <UnitTestResult executionId="d97d9fb4-4877-42cc-9708-311239d39c4b" testId="df895dc0-2ccb-846a-e0ae-c35dd3884995" testName="TestMyMiddlewareIntegration (100)" computerName="pkrvmxyh4eaekms" duration="00:00:08.1181497" startTime="2025-06-21T19:39:39.9999467+00:00" endTime="2025-06-21T19:39:48.3656805+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d97d9fb4-4877-42cc-9708-311239d39c4b">
+      <Output>
+        <StdOut>dbug: Microsoft.Extensions.Hosting.Internal.Host[1]
+      Hosting starting
+dbug: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[7]
+      Middleware configuration started with options: {AllowedHosts = *, AllowEmptyHosts = True, IncludeFailureMessage = True}
+dbug: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[0]
+      Wildcard detected, all requests with hosts will be allowed.
+warn: Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer[8]
+      The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: https://localhost:5426
+dbug: Microsoft.AspNetCore.Hosting.Diagnostics[13]
+      Loaded hosting startup assembly testhost
+info: BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService[0]
+      No persisted data file found at /home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/FailurePointsFilteringMiddleware.json.
+info: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Successfully loaded persisted data during application startup.
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[39]
+      Connection id "0HNDGVDCL5JLE" accepted.
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[1]
+      Connection id "0HNDGVDCL5JLE" started.
+dbug: Microsoft.AspNetCore.Server.Kestrel.Https.Internal.HttpsConnectionMiddleware[3]
+      Connection 0HNDGVDCL5JLE established using the following protocol: Tls13
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET https://localhost:5426/home - - -
+trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+      All hosts are allowed.
+dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1001]
+      1 candidate(s) found for the request path '/home'
+dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+      Request matched endpoint 'HTTP: GET /home'
+trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+      The endpoint does not specify the IRequestSizeLimitMetadata.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware[0]
+      Allowed: RemoteIpAddress '::1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware[0]
+      Bypassing CIDR filtering for localhost.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware[0]
+      Whitelisted continue: URL segments 'https://localhost:5426/home' matched whitelisted pattern *.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Allowed: IP '::1' with 0 failures - continuing.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /home'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /home'
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+      Connection id "0HNDGVDCL5JLE" completed keep alive response.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://localhost:5426/home - 200 - - 5.6780ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET https://localhost:5426/home/fooa - - -
+trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+      All hosts are allowed.
+dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1001]
+      1 candidate(s) found for the request path '/home/fooa'
+dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+      Request matched endpoint 'HTTP: GET /home/fooa'
+trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+      The endpoint does not specify the IRequestSizeLimitMetadata.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware[0]
+      Allowed: RemoteIpAddress '::1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware[0]
+      Bypassing CIDR filtering for localhost.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware[0]
+      Whitelisted continue: URL segments 'https://localhost:5426/home/fooa' matched whitelisted pattern *.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Allowed: IP '::1' with 0 failures - continuing.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /home/fooa'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /home/fooa'
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+      Connection id "0HNDGVDCL5JLE" completed keep alive response.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://localhost:5426/home/fooa - 200 - - 1.2656ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET https://localhost:5426/ - - -
+trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+      All hosts are allowed.
+dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1001]
+      1 candidate(s) found for the request path '/'
+dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+      Request matched endpoint 'HTTP: GET /'
+trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+      The endpoint does not specify the IRequestSizeLimitMetadata.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware[0]
+      Allowed: RemoteIpAddress '::1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware[0]
+      Bypassing CIDR filtering for localhost.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware[0]
+      Whitelisted continue: URL segments 'https://localhost:5426/' matched whitelisted pattern *.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Allowed: IP '::1' with 0 failures - continuing.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /'
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+      Connection id "0HNDGVDCL5JLE" completed keep alive response.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://localhost:5426/ - 200 - - 0.5520ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET https://localhost:5426/ - - -
+trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+      All hosts are allowed.
+dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1001]
+      1 candidate(s) found for the request path '/'
+dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+      Request matched endpoint 'HTTP: GET /'
+trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+      The endpoint does not specify the IRequestSizeLimitMetadata.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware[0]
+      Allowed: RemoteIpAddress '::1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.CIDRFilteringMiddleware[0]
+      Bypassing CIDR filtering for localhost.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware[0]
+      Whitelisted continue: URL segments 'https://localhost:5426/' matched whitelisted pattern *.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Allowed: IP '::1' with 0 failures - continuing.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /'
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+      Connection id "0HNDGVDCL5JLE" completed keep alive response.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://localhost:5426/ - 200 - - 0.5375ms
+dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[6]
+      Connection id "0HNDGVDCL5JLE" received FIN.
+dbug: Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets[7]
+      Connection id "0HNDGVDCL5JLE" sending FIN because: "The Socket transport's send loop completed gracefully."
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[10]
+      Connection id "0HNDGVDCL5JLE" disconnecting.
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[2]
+      Connection id "0HNDGVDCL5JLE" stopped.
+dbug: Microsoft.Extensions.Hosting.Internal.Host[3]
+      Hosting stopping
+info: BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService[0]
+      Dumped failure point data to JSON file at /home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/FailurePointsFilteringMiddleware.json
+info: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Successfully dumped all data during application shutdown.
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+dbug: Microsoft.Extensions.Hosting.Internal.Host[4]
+      Hosting stopped</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="da269af5-e095-4b8a-97a5-05ba6d75572f" testId="0120bcc0-0f50-9225-3552-7c8effeebf0b" testName="IsRegExMatchIntegrationArray (&quot;foo&quot;,null,False)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000193" startTime="2025-06-21T19:39:39.9977201+00:00" endTime="2025-06-21T19:39:39.9979425+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da269af5-e095-4b8a-97a5-05ba6d75572f" />
+    <UnitTestResult executionId="52701a3e-1493-47f3-b0da-647feaa81287" testId="d4acf9d4-6034-e355-5f26-7bf6f871a988" testName="IsRegExMatchIntegration (&quot;dynx&quot;,&quot;*dyn*&quot;,True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000208" startTime="2025-06-21T19:39:39.9926073+00:00" endTime="2025-06-21T19:39:39.9927679+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="52701a3e-1493-47f3-b0da-647feaa81287" />
+    <UnitTestResult executionId="cf0bd66b-9a17-44ec-8270-bfbb436c8260" testId="d7957730-df21-c691-a538-93b2799dc829" testName="IsRegExMatchIntegration (&quot;foo&quot;,&quot;*&quot;,True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0013370" startTime="2025-06-21T19:39:39.9881185+00:00" endTime="2025-06-21T19:39:39.9905220+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf0bd66b-9a17-44ec-8270-bfbb436c8260" />
+    <UnitTestResult executionId="cda6d2d6-51c8-4fd5-8b56-654019f9e5fd" testId="efa609d9-2713-7b15-e1c9-c215aa9fed49" testName="TestMyMiddlewareIntegration (100)" computerName="pkrvmxyh4eaekms" duration="00:00:06.2701212" startTime="2025-06-21T19:39:33.4824480+00:00" endTime="2025-06-21T19:39:39.9792333+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cda6d2d6-51c8-4fd5-8b56-654019f9e5fd">
+      <Output>
+        <StdOut>dbug: Microsoft.Extensions.Hosting.Internal.Host[1]
+      Hosting starting
+dbug: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[7]
+      Middleware configuration started with options: {AllowedHosts = *, AllowEmptyHosts = True, IncludeFailureMessage = True}
+dbug: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[0]
+      Wildcard detected, all requests with hosts will be allowed.
+warn: Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer[8]
+      The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: https://localhost:5425
+dbug: Microsoft.AspNetCore.Hosting.Diagnostics[13]
+      Loaded hosting startup assembly testhost
+info: BlackBytesBox.Routed.RequestFilters.Services.MiddlewareFailurePointService[0]
+      No persisted data file found at /home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/FailurePointsFilteringMiddleware.json.
+info: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Successfully loaded persisted data during application startup.
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[39]
+      Connection id "0HNDGVDCL5JLD" accepted.
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[1]
+      Connection id "0HNDGVDCL5JLD" started.
+dbug: Microsoft.AspNetCore.Server.Kestrel.Https.Internal.HttpsConnectionMiddleware[3]
+      Connection 0HNDGVDCL5JLD established using the following protocol: Tls13
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET https://localhost:5425/ - - -
+trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+      All hosts are allowed.
+dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1001]
+      1 candidate(s) found for the request path '/'
+dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+      Request matched endpoint 'HTTP: GET /'
+trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+      The endpoint does not specify the IRequestSizeLimitMetadata.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware[0]
+      Allowed: RemoteIpAddress '::1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HttpProtocolFilteringMiddleware[0]
+      Allowed: protocol 'HTTP/1.1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HostNameFilteringMiddleware[0]
+      Whitelisted continue: host 'localhost' matched whitelisted pattern localhost.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.UserAgentFilteringMiddleware[0]
+      Allowed: User-Agent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RequestUrlFilteringMiddleware[0]
+      Allowed: requestUrl '/' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.DnsHostNameFilteringMiddleware[0]
+      Allowed: DNS host 'localhost.' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderPresentsFilteringMiddleware[0]
+      Allowed: Headers 4 match  e.g. 'Host' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.AcceptLanguageFilteringMiddleware[0]
+      Allowed: Accept-Language 'de-DE' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware[0]
+      Whitelisted continue: URL segments 'https://localhost:5425/' matched whitelisted pattern *.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.PathDeepFilteringMiddleware[0]
+      Allowed: depth 0 on / - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware[0]
+      Processed header 'User-Agent' with value 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware[0]
+      Allowed: All required headers validated successfully. - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Allowed: IP '::1' with 0 failures - continuing.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /'
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+      Connection id "0HNDGVDCL5JLD" completed keep alive response.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://localhost:5425/ - 200 - - 69.6491ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET https://localhost:5425/ - - -
+trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+      All hosts are allowed.
+dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1001]
+      1 candidate(s) found for the request path '/'
+dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+      Request matched endpoint 'HTTP: GET /'
+trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+      The endpoint does not specify the IRequestSizeLimitMetadata.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware[0]
+      Allowed: RemoteIpAddress '::1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HttpProtocolFilteringMiddleware[0]
+      Allowed: protocol 'HTTP/1.1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HostNameFilteringMiddleware[0]
+      Whitelisted continue: host 'localhost' matched whitelisted pattern localhost.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.UserAgentFilteringMiddleware[0]
+      Allowed: User-Agent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RequestUrlFilteringMiddleware[0]
+      Allowed: requestUrl '/' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.DnsHostNameFilteringMiddleware[0]
+      Allowed: DNS host 'localhost.' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderPresentsFilteringMiddleware[0]
+      Allowed: Headers 4 match  e.g. 'Host' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.AcceptLanguageFilteringMiddleware[0]
+      Allowed: Accept-Language 'de-DE' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware[0]
+      Whitelisted continue: URL segments 'https://localhost:5425/' matched whitelisted pattern *.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.PathDeepFilteringMiddleware[0]
+      Allowed: depth 0 on / - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware[0]
+      Processed header 'User-Agent' with value 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware[0]
+      Allowed: All required headers validated successfully. - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Allowed: IP '::1' with 0 failures - continuing.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /'
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+      Connection id "0HNDGVDCL5JLD" completed keep alive response.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://localhost:5425/ - 200 - - 7.2640ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET https://localhost:5425/ - - -
+trce: Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware[2]
+      All hosts are allowed.
+dbug: Microsoft.AspNetCore.Routing.Matching.DfaMatcher[1001]
+      1 candidate(s) found for the request path '/'
+dbug: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[1]
+      Request matched endpoint 'HTTP: GET /'
+trce: Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware[8]
+      The endpoint does not specify the IRequestSizeLimitMetadata.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RemoteIPFilteringMiddleware[0]
+      Allowed: RemoteIpAddress '::1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HttpProtocolFilteringMiddleware[0]
+      Allowed: protocol 'HTTP/1.1' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HostNameFilteringMiddleware[0]
+      Whitelisted continue: host 'localhost' matched whitelisted pattern localhost.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.UserAgentFilteringMiddleware[0]
+      Allowed: User-Agent 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.RequestUrlFilteringMiddleware[0]
+      Allowed: requestUrl '/' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.DnsHostNameFilteringMiddleware[0]
+      Allowed: DNS host 'localhost.' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderPresentsFilteringMiddleware[0]
+      Allowed: Headers 4 match  e.g. 'Host' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.AcceptLanguageFilteringMiddleware[0]
+      Allowed: Accept-Language 'de-DE' - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.SegmentFilteringMiddleware[0]
+      Whitelisted continue: URL segments 'https://localhost:5425/' matched whitelisted pattern *.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.PathDeepFilteringMiddleware[0]
+      Allowed: depth 0 on / - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware[0]
+      Processed header 'User-Agent' with value 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36'.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.HeaderValuesRequiredFilteringMiddleware[0]
+      Allowed: All required headers validated successfully. - continuing.
+dbug: BlackBytesBox.Routed.RequestFilters.Middleware.FailurePointsFilteringMiddleware[0]
+      Allowed: IP '::1' with 0 failures - continuing.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /'
+dbug: Microsoft.AspNetCore.Server.Kestrel.Connections[9]
+      Connection id "0HNDGVDCL5JLD" completed keep alive response.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://localhost:5425/ - 200 - - 11.3793ms</StdOut>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0f734604-0002-4232-a363-c146e8763caf" testId="d2c42fa7-f2dc-ae5f-b261-27521ecdf3d0" testName="IsRegExMatchIntegrationArray (&quot;&quot;,[null,&quot;&quot;,&quot;*&quot;,&quot;test&quot;],True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000232" startTime="2025-06-21T19:39:39.9989624+00:00" endTime="2025-06-21T19:39:39.9992220+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f734604-0002-4232-a363-c146e8763caf" />
+    <UnitTestResult executionId="c5795f13-3887-40e7-a481-a5b372794e6f" testId="759c33a5-db99-6a11-9dab-1d09f154d970" testName="IsRegExMatchIntegrationArray (&quot;foo&quot;,[],False)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0004068" startTime="2025-06-21T19:39:39.9928034+00:00" endTime="2025-06-21T19:39:39.9954309+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5795f13-3887-40e7-a481-a5b372794e6f" />
+    <UnitTestResult executionId="cc30fb25-07c8-43e0-aad2-e96035cc097b" testId="f59ea59b-b653-47f6-0ef9-de66dfc6c68e" testName="IsRegExMatchIntegrationArray (null,[null,&quot;&quot;,&quot;*&quot;,&quot;test&quot;],True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000192" startTime="2025-06-21T19:39:39.9987011+00:00" endTime="2025-06-21T19:39:39.9989019+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc30fb25-07c8-43e0-aad2-e96035cc097b" />
+    <UnitTestResult executionId="53bc7148-6590-451c-8710-e8a1f7b353bf" testId="e69d8f5b-d313-f04f-5932-a62b3c1372d8" testName="IsRegExMatchIntegration (null,&quot;*&quot;,False)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000166" startTime="2025-06-21T19:39:39.9921213+00:00" endTime="2025-06-21T19:39:39.9923344+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="53bc7148-6590-451c-8710-e8a1f7b353bf" />
+    <UnitTestResult executionId="5e889797-f8ac-48fe-96e0-b02b20557ac7" testId="30788f73-9233-6c0e-20b9-e5e7738ce25a" testName="IsRegExMatchIntegration (null,null,True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000172" startTime="2025-06-21T19:39:39.9916431+00:00" endTime="2025-06-21T19:39:39.9918253+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e889797-f8ac-48fe-96e0-b02b20557ac7" />
+    <UnitTestResult executionId="e6b4dd91-90b8-4741-8b46-957457334b1a" testId="b292e116-23cd-95df-84c9-ccd9206c29c3" testName="IsRegExMatchIntegration (&quot;ydyn&quot;,&quot;*dyn*&quot;,True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000222" startTime="2025-06-21T19:39:39.9923973+00:00" endTime="2025-06-21T19:39:39.9925776+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6b4dd91-90b8-4741-8b46-957457334b1a" />
+    <UnitTestResult executionId="1d46249c-8ca6-4ea2-b7a8-e461258bdf32" testId="c4369302-c56f-44fb-3f23-b1c04be4c3a7" testName="IsRegExMatchIntegration (&quot;foo&quot;,null,False)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000148" startTime="2025-06-21T19:39:39.9918686+00:00" endTime="2025-06-21T19:39:39.9920780+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d46249c-8ca6-4ea2-b7a8-e461258bdf32" />
+    <UnitTestResult executionId="3d0b9b71-f8a1-4faf-89c7-c84a9a0d7f01" testId="759c33a5-db99-6a11-9dab-1d09f154d970" testName="IsRegExMatchIntegrationArray (&quot;foo&quot;,[],False)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000135" startTime="2025-06-21T19:39:39.9979796+00:00" endTime="2025-06-21T19:39:39.9981637+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3d0b9b71-f8a1-4faf-89c7-c84a9a0d7f01" />
+    <UnitTestResult executionId="0933bc57-c1c1-45e5-bc73-3409170373d6" testId="759c33a5-db99-6a11-9dab-1d09f154d970" testName="IsRegExMatchIntegrationArray (&quot;foo&quot;,[],False)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0001588" startTime="2025-06-21T19:39:39.9954650+00:00" endTime="2025-06-21T19:39:39.9957906+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0933bc57-c1c1-45e5-bc73-3409170373d6" />
+    <UnitTestResult executionId="e37dbb85-39e6-4f3a-9f30-5e4ec21df8b9" testId="89e140d1-765f-6ef4-2832-7f7040788513" testName="IsRegExMatchIntegrationArray (&quot;CRITFORGE.COM&quot;,[&quot;critforge.com&quot;],True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000426" startTime="2025-06-21T19:39:39.9996198+00:00" endTime="2025-06-21T19:39:39.9998979+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e37dbb85-39e6-4f3a-9f30-5e4ec21df8b9" />
+    <UnitTestResult executionId="5a14d6ba-41ee-4efb-97ec-543072c549ea" testId="f817e4b5-d075-ea42-49a1-c565a73bb2f9" testName="IsRegExMatchIntegration (&quot;https:///&quot;)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0109122" startTime="2025-06-21T19:39:33.4459451+00:00" endTime="2025-06-21T19:39:33.4784855+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5a14d6ba-41ee-4efb-97ec-543072c549ea" />
+    <UnitTestResult executionId="1bd8d656-27c5-4fa6-8b18-e1599b1fa0c5" testId="f59ea59b-b653-47f6-0ef9-de66dfc6c68e" testName="IsRegExMatchIntegrationArray (null,[null,&quot;&quot;,&quot;*&quot;,&quot;test&quot;],True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0000289" startTime="2025-06-21T19:39:39.9982199+00:00" endTime="2025-06-21T19:39:39.9986626+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1bd8d656-27c5-4fa6-8b18-e1599b1fa0c5" />
+    <UnitTestResult executionId="17d357e4-5dec-4c60-aff1-180b182b7855" testId="8332f7eb-6df6-17fa-7e37-7e0b63579e68" testName="IsRegExMatchIntegration (&quot;bar&quot;,&quot;b?r&quot;,True)" computerName="pkrvmxyh4eaekms" duration="00:00:00.0005782" startTime="2025-06-21T19:39:39.9905786+00:00" endTime="2025-06-21T19:39:39.9915858+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17d357e4-5dec-4c60-aff1-180b182b7855" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="IsRegExMatchIntegration (&quot;bar&quot;,&quot;b?r&quot;,True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="8332f7eb-6df6-17fa-7e37-7e0b63579e68">
+      <Execution id="17d357e4-5dec-4c60-aff1-180b182b7855" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegrationArray (&quot;foo&quot;,null,False)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="0120bcc0-0f50-9225-3552-7c8effeebf0b">
+      <Execution id="da269af5-e095-4b8a-97a5-05ba6d75572f" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegrationArray" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegration (&quot;dynx&quot;,&quot;*dyn*&quot;,True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="d4acf9d4-6034-e355-5f26-7bf6f871a988">
+      <Execution id="52701a3e-1493-47f3-b0da-647feaa81287" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegration (&quot;ydyn&quot;,&quot;*dyn*&quot;,True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="b292e116-23cd-95df-84c9-ccd9206c29c3">
+      <Execution id="e6b4dd91-90b8-4741-8b46-957457334b1a" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegration (null,&quot;*&quot;,False)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="e69d8f5b-d313-f04f-5932-a62b3c1372d8">
+      <Execution id="53bc7148-6590-451c-8710-e8a1f7b353bf" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegrationArray (&quot;&quot;,[null,&quot;&quot;,&quot;*&quot;,&quot;test&quot;],True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="d2c42fa7-f2dc-ae5f-b261-27521ecdf3d0">
+      <Execution id="0f734604-0002-4232-a363-c146e8763caf" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegrationArray" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegration (null,null,True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="30788f73-9233-6c0e-20b9-e5e7738ce25a">
+      <Execution id="5e889797-f8ac-48fe-96e0-b02b20557ac7" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegrationArray (&quot;foo&quot;,[],False)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="759c33a5-db99-6a11-9dab-1d09f154d970">
+      <Execution id="c5795f13-3887-40e7-a481-a5b372794e6f" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegrationArray" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegrationArray (null,[null,&quot;&quot;,&quot;*&quot;,&quot;test&quot;],True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="f59ea59b-b653-47f6-0ef9-de66dfc6c68e">
+      <Execution id="1bd8d656-27c5-4fa6-8b18-e1599b1fa0c5" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegrationArray" />
+    </UnitTest>
+    <UnitTest name="TestMyMiddlewareIntegration (100)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="df895dc0-2ccb-846a-e0ae-c35dd3884995">
+      <Execution id="d97d9fb4-4877-42cc-9708-311239d39c4b" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.SegmentFilteringMiddlewareIntegrationTests" name="TestMyMiddlewareIntegration" />
+    </UnitTest>
+    <UnitTest name="TestMyMiddlewareIntegration (100)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="efa609d9-2713-7b15-e1c9-c215aa9fed49">
+      <Execution id="cda6d2d6-51c8-4fd5-8b56-654019f9e5fd" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.MyMiddlewareIntegrationTests" name="TestMyMiddlewareIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegration (&quot;https:///&quot;)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="f817e4b5-d075-ea42-49a1-c565a73bb2f9">
+      <Execution id="5a14d6ba-41ee-4efb-97ec-543072c549ea" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.ContextTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegration (&quot;foo&quot;,null,False)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="c4369302-c56f-44fb-3f23-b1c04be4c3a7">
+      <Execution id="1d46249c-8ca6-4ea2-b7a8-e461258bdf32" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegration (&quot;foo&quot;,&quot;*&quot;,True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="d7957730-df21-c691-a538-93b2799dc829">
+      <Execution id="cf0bd66b-9a17-44ec-8270-bfbb436c8260" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegration" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegrationArray (&quot;foo&quot;,[&quot;*f*&quot;,&quot;*o&quot;,&quot;o&quot;],True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="eb8d22a9-258a-b1b2-581a-c04af435eac0">
+      <Execution id="1de3028f-1458-4877-8fff-016a9a30ff51" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegrationArray" />
+    </UnitTest>
+    <UnitTest name="IsRegExMatchIntegrationArray (&quot;CRITFORGE.COM&quot;,[&quot;critforge.com&quot;],True)" storage="/home/runner/work/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters/source/blackbytesbox.routed.requestfilters/blackbytesbox.routed.requestfilters.tests/bin/release/net9.0/blackbytesbox.routed.requestfilters.tests.dll" id="89e140d1-765f-6ef4-2832-7f7040788513">
+      <Execution id="e37dbb85-39e6-4f3a-9f30-5e4ec21df8b9" />
+      <TestMethod codeBase="/home/runner/work/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters/source/BlackBytesBox.Routed.RequestFilters/BlackBytesBox.Routed.RequestFilters.Tests/bin/Release/net9.0/BlackBytesBox.Routed.RequestFilters.Tests.dll" adapterTypeName="executor://mstestadapter/v2" className="BlackBytesBox.Routed.RequestFilters.Tests.RegExTests" name="IsRegExMatchIntegrationArray" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="eb8d22a9-258a-b1b2-581a-c04af435eac0" executionId="1de3028f-1458-4877-8fff-016a9a30ff51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df895dc0-2ccb-846a-e0ae-c35dd3884995" executionId="d97d9fb4-4877-42cc-9708-311239d39c4b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0120bcc0-0f50-9225-3552-7c8effeebf0b" executionId="da269af5-e095-4b8a-97a5-05ba6d75572f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d4acf9d4-6034-e355-5f26-7bf6f871a988" executionId="52701a3e-1493-47f3-b0da-647feaa81287" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7957730-df21-c691-a538-93b2799dc829" executionId="cf0bd66b-9a17-44ec-8270-bfbb436c8260" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="efa609d9-2713-7b15-e1c9-c215aa9fed49" executionId="cda6d2d6-51c8-4fd5-8b56-654019f9e5fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2c42fa7-f2dc-ae5f-b261-27521ecdf3d0" executionId="0f734604-0002-4232-a363-c146e8763caf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="759c33a5-db99-6a11-9dab-1d09f154d970" executionId="c5795f13-3887-40e7-a481-a5b372794e6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f59ea59b-b653-47f6-0ef9-de66dfc6c68e" executionId="cc30fb25-07c8-43e0-aad2-e96035cc097b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e69d8f5b-d313-f04f-5932-a62b3c1372d8" executionId="53bc7148-6590-451c-8710-e8a1f7b353bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="30788f73-9233-6c0e-20b9-e5e7738ce25a" executionId="5e889797-f8ac-48fe-96e0-b02b20557ac7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b292e116-23cd-95df-84c9-ccd9206c29c3" executionId="e6b4dd91-90b8-4741-8b46-957457334b1a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4369302-c56f-44fb-3f23-b1c04be4c3a7" executionId="1d46249c-8ca6-4ea2-b7a8-e461258bdf32" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="759c33a5-db99-6a11-9dab-1d09f154d970" executionId="3d0b9b71-f8a1-4faf-89c7-c84a9a0d7f01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="759c33a5-db99-6a11-9dab-1d09f154d970" executionId="0933bc57-c1c1-45e5-bc73-3409170373d6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="89e140d1-765f-6ef4-2832-7f7040788513" executionId="e37dbb85-39e6-4f3a-9f30-5e4ec21df8b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f817e4b5-d075-ea42-49a1-c565a73bb2f9" executionId="5a14d6ba-41ee-4efb-97ec-543072c549ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f59ea59b-b653-47f6-0ef9-de66dfc6c68e" executionId="1bd8d656-27c5-4fa6-8b18-e1599b1fa0c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8332f7eb-6df6-17fa-7e37-7e0b63579e68" executionId="17d357e4-5dec-4c60-aff1-180b182b7855" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="19" executed="19" passed="19" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+</TestRun>

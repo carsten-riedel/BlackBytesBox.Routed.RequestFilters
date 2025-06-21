@@ -43,20 +43,33 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             _optionsMonitor = optionsMonitor;
             _middlewareFailurePointService = middlewareFailurePointService;
 
-            // Your public resolvers
             var publicServers = new[]
             {
-                IPAddress.Parse("8.8.8.8"),   // Google
-                IPAddress.Parse("8.8.4.4"),   // Google fallback
-                IPAddress.Parse("1.1.1.1"),   // Cloudflare
-                IPAddress.Parse("1.0.0.1")    // Cloudflare fallback
+                // Google IPv4
+                IPAddress.Parse("8.8.8.8"),
+                IPAddress.Parse("8.8.4.4"),
+
+                // Google IPv6
+                IPAddress.Parse("2001:4860:4860::8888"),
+                IPAddress.Parse("2001:4860:4860::8844"),
+
+                // Cloudflare IPv4
+                IPAddress.Parse("1.1.1.1"),
+                IPAddress.Parse("1.0.0.1"),
+
+                // Cloudflare IPv6
+                IPAddress.Parse("2606:4700:4700::1111"),
+                IPAddress.Parse("2606:4700:4700::1001")
             };
+
             var options = new LookupClientOptions(publicServers)
             {
-                AutoResolveNameServers = true,       // include OS‐configured servers
-                Timeout = TimeSpan.FromSeconds(2), // fast network timeout
-                Retries = 0,                     // fail fast
-                UseCache = true                   // cache per the DNS TTL
+                AutoResolveNameServers = true,   // include your OS-configured servers
+                UseRandomNameServer = false,  // stick to list order
+                ThrowDnsErrors = false,  // don’t throw, just fail over
+                Timeout = TimeSpan.FromSeconds(2),
+                Retries = 0,      // try each server exactly once
+                UseCache = true
             };
 
             _lookupClient = new LookupClient(options);

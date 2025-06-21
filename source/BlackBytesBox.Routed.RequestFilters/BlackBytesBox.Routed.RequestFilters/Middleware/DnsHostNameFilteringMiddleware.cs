@@ -114,11 +114,28 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
                 }
             }
 
-            bool isAllowed = resolvedDnsName != null && resolvedDnsName.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
+            bool isAllowed = false;
+            bool mayBeClient = false;
+            if (resolvedDnsName != null)
+            {
+                _logger.LogDebug("Resolved DNS host: {DnsHost}", resolvedDnsName);
+                isAllowed = resolvedDnsName.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
+            }
+            else
+            {
+                _logger.LogDebug("No DNS host resolved for IP: {IP}", remoteIPAddress);
+                mayBeClient = true; // If no DNS name is resolved, we assume it might be a client
+            }
 
             if (isAllowed)
             {
                 _logger.LogDebug("Allowed: DNS host '{DnsHost}' - continuing.", resolvedDnsName);
+                await _nextMiddleware(context);
+                return;
+            }
+            else if (mayBeClient)
+            {
+                _logger.LogDebug("May be client: DNS host '{DnsHost}' - continuing.", resolvedDnsName);
                 await _nextMiddleware(context);
                 return;
             }
@@ -132,13 +149,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - continuing.",resolvedDnsName);
+                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - continuing.", resolvedDnsName);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - aborting.",resolvedDnsName);
+                    _logger.LogDebug("Disallowed: DNS host '{DnsHost}' - aborting.", resolvedDnsName);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

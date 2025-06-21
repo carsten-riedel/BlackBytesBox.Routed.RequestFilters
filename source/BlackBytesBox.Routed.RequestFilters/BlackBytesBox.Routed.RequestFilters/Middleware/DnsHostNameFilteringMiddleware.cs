@@ -1,14 +1,20 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
+using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
+using BlackBytesBox.Routed.RequestFilters.Services;
+
+using DnsClient;
+using DnsClient.Protocol;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System;
-using System.Net;
-using BlackBytesBox.Routed.RequestFilters.Services;
-using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
-using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
-using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
-using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 
 namespace BlackBytesBox.Routed.RequestFilters.Middleware
 {
@@ -21,6 +27,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         private readonly ILogger<DnsHostNameFilteringMiddleware> _logger;
         private readonly IOptionsMonitor<DnsHostNameFilteringMiddlewareOptions> _optionsMonitor;
         private readonly MiddlewareFailurePointService _middlewareFailurePointService;
+        private readonly LookupClient _lookupClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DnsHostNameFilteringMiddleware"/> class.
@@ -35,6 +42,24 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             _logger = logger;
             _optionsMonitor = optionsMonitor;
             _middlewareFailurePointService = middlewareFailurePointService;
+
+            // Your public resolvers
+            var publicServers = new[]
+            {
+                IPAddress.Parse("8.8.8.8"),   // Google
+                IPAddress.Parse("8.8.4.4"),   // Google fallback
+                IPAddress.Parse("1.1.1.1"),   // Cloudflare
+                IPAddress.Parse("1.0.0.1")    // Cloudflare fallback
+            };
+            var options = new LookupClientOptions(publicServers)
+            {
+                AutoResolveNameServers = true,       // include OS‐configured servers
+                Timeout = TimeSpan.FromSeconds(2), // fast network timeout
+                Retries = 0,                     // fail fast
+                UseCache = true                   // cache per the DNS TTL
+            };
+
+            _lookupClient = new LookupClient(options);
 
             _optionsMonitor.OnChange(updatedOptions =>
             {
@@ -53,16 +78,27 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
 
             var remoteIPAddress = context.GetItem<string>("remoteIpAddressStr");
-            
+
             string? resolvedDnsName = null;
-            try
+
+            if (IPAddress.TryParse(remoteIPAddress, out var ip))
             {
-                var hostEntry = Dns.GetHostEntry(remoteIPAddress);
-                resolvedDnsName = hostEntry.HostName;
-            }
-            catch (Exception)
-            {
-                resolvedDnsName = null;
+                try
+                {
+                    // Reverse‐lookup via Google DNS
+                    var result = await _lookupClient.QueryReverseAsync(ip);
+                    var ptr = result
+                        .Answers                   // this is IEnumerable<DnsResourceRecord>
+                        .PtrRecords()              // extension method lives here
+                        .FirstOrDefault()
+                        ?.PtrDomainName
+                        .Value;
+                    resolvedDnsName = ptr;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Reverse DNS lookup failed for {IP}", ip);
+                }
             }
 
             bool isAllowed = resolvedDnsName != null && resolvedDnsName.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);

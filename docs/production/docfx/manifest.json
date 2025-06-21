@@ -134,6 +134,46 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.IPAddressExtensions.IpInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.IPAddressExtensions.IpInfo.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.IPAddressExtensions.IpVersion.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.IPAddressExtensions.IpVersion.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.IPAddressExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.IPAddressExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/BlackBytesBox.Routed.RequestFilters.Extensions.IServiceCollectionExtensions.IServiceCollectionExtensions.yml",
       "output": {
         ".html": {

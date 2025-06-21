@@ -125,7 +125,7 @@ namespace BlackBytesBox.Routed.RequestFilters.Tests
             // Add a default User-Agent header for testing.
             client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36");
             client.DefaultRequestHeaders.Add("APPID", "1234");
-            client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("de-DE");
+            //client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("de-DE");
         }
 
         [TestCleanup]

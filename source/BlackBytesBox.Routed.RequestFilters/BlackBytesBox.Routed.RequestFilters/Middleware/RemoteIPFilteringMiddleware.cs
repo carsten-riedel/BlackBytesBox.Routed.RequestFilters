@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpContextExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions;
 using BlackBytesBox.Routed.RequestFilters.Extensions.StringExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Services;
@@ -75,82 +76,42 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             var options = _optionsMonitor.CurrentValue;
 
             System.Net.IPAddress? remoteIpAddress = context.Connection.RemoteIpAddress;
+            var ipInfo = remoteIpAddress.ToIpInfo();
 
-            var ipInfo = new IpInfo();
-
-            if (remoteIpAddress != null)
-            {
-                // By default, convert the IP address to string.
-                ipInfo.RemoteIp = remoteIpAddress.ToString();
-
-                // Determine the IP version based on the AddressFamily.
-                if (remoteIpAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                {
-                    ipInfo.Version = IpVersion.IPv4;
-                }
-                else if (remoteIpAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                {
-                    // Check if it is an IPv4-mapped IPv6 address.
-                    if (remoteIpAddress.IsIPv4MappedToIPv6)
-                    {
-                        ipInfo.Version = IpVersion.IPv4;
-                        // Optionally, map to IPv4 for easier processing.
-                        remoteIpAddress = remoteIpAddress.MapToIPv4();
-                        ipInfo.RemoteIp = remoteIpAddress.ToString();
-                    }
-                    else
-                    {
-                        ipInfo.Version = IpVersion.IPv6;
-                    }
-                }
-                else
-                {
-                    ipInfo.Version = IpVersion.Unknown;
-                }
-            }
-            else
-            {
-                ipInfo.RemoteIp = "Unknown";
-                ipInfo.Version = IpVersion.Unknown;
-            }
-
-
-            if (remoteIpAddress == null)
+            if (string.IsNullOrEmpty(ipInfo.RemoteIp))
             {
                 _logger.LogError("Request rejected: Missing valid IP address. - aborting.");
                 await context.Response.WriteDefaultStatusCodeAnswer(_optionsMonitor.CurrentValue.DisallowedStatusCode);
                 return;
             }
 
-            string remoteIpAddressStr = remoteIpAddress.ToString();
-
-            bool isAllowed = remoteIpAddressStr.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
+            bool isAllowed = ipInfo.RemoteIp.ValidateWhitelistBlacklist(options.Whitelist, options.Blacklist);
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: RemoteIpAddress '{Protocol}' - continuing.", remoteIpAddressStr);
-                context.SetItem("remoteIpAddressStr", remoteIpAddressStr);
+                _logger.LogDebug("Allowed: RemoteIpAddress '{Protocol}' - continuing.", ipInfo.RemoteIp);
+                context.SetItem("remoteIpAddressStr", ipInfo.RemoteIp);
                 await _nextMiddleware(context);
                 return;
             }
             else
             {
                 await _middlewareFailurePointService.AddOrUpdateFailurePointAsync(
-                    remoteIpAddressStr,
+                    ipInfo.RemoteIp,
                     nameof(RemoteIPFilteringMiddleware),
                     options.DisallowedFailureRating,
                     DateTime.UtcNow);
 
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("Disallowed: RemoteIpAddress '{RemoteIpAddress}' - continuing.", remoteIpAddressStr);
-                    context.Items["remoteIpAddressStr"] = remoteIpAddressStr;
+                    _logger.LogDebug("Disallowed: RemoteIpAddress '{RemoteIpAddress}' - continuing.", ipInfo.RemoteIp);
+                    context.Items["remoteIpAddressStr"] = ipInfo.RemoteIp;
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Disallowed: RemoteIpAddress '{RemoteIpAddress}' - aborting.", remoteIpAddressStr);
+                    _logger.LogDebug("Disallowed: RemoteIpAddress '{RemoteIpAddress}' - aborting.", ipInfo.RemoteIp);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

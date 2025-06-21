@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using BlackBytesBox.Routed.RequestFilters.Extensions.HttpResponseExtensions;
+using BlackBytesBox.Routed.RequestFilters.Extensions.IPAddressExtensions;
 using BlackBytesBox.Routed.RequestFilters.Middleware.Options;
 using BlackBytesBox.Routed.RequestFilters.Services;
 
@@ -103,21 +104,25 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             var options = _optionsMonitor.CurrentValue;
-            string? requestIp = context.Connection.RemoteIpAddress?.ToString();
-            if (string.IsNullOrEmpty(requestIp))
+
+
+            System.Net.IPAddress? remoteIpAddress = context.Connection.RemoteIpAddress;
+            var ipInfo = remoteIpAddress.ToIpInfo();
+
+            if (string.IsNullOrEmpty(ipInfo.RemoteIp))
             {
                 _logger.LogError("Rejected: no IP.");
                 await context.Response.WriteDefaultStatusCodeAnswer(StatusCodes.Status400BadRequest);
                 return;
             }
-
-            var currentFailurePoints = await _middlewareFailurePointService.GetSummaryByIPAsync(requestIp);
+            
+            var currentFailurePoints = await _middlewareFailurePointService.GetSummaryByIPAsync(ipInfo.RemoteIp);
             int failures = currentFailurePoints?.FailurePoint ?? 0;
             bool isAllowed = currentFailurePoints == null || (failures <= options.FailurePointsLimit);
 
             if (isAllowed)
             {
-                _logger.LogDebug("Allowed: IP '{RequestIp}' with {Failures} failures - continuing.", requestIp, failures);
+                _logger.LogDebug("Allowed: IP '{RequestIp}' with {Failures} failures - continuing.", ipInfo.RemoteIp, failures);
                 await _nextMiddleware(context);
                 return;
             }
@@ -125,13 +130,13 @@ namespace BlackBytesBox.Routed.RequestFilters.Middleware
             {
                 if (options.ContinueOnDisallowed)
                 {
-                    _logger.LogDebug("IP '{RequestIp}' exceeded limit with {Failures} failures points - continuing.", requestIp, failures);
+                    _logger.LogDebug("IP '{RequestIp}' exceeded limit with {Failures} failures points - continuing.", ipInfo.RemoteIp, failures);
                     await _nextMiddleware(context);
                     return;
                 }
                 else
                 {
-                    _logger.LogDebug("Blocked: IP '{RequestIp}' with {Failures} failure points  - aborting.", requestIp, failures);
+                    _logger.LogDebug("Blocked: IP '{RequestIp}' with {Failures} failure points  - aborting.", ipInfo.RemoteIp, failures);
                     await context.Response.WriteDefaultStatusCodeAnswer(options.DisallowedStatusCode);
                     return;
                 }

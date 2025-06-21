@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "PackageId": "DnsClient",
+    "PackageVersion": "1.8.0",
+    "PackageProjectUrl": "http://dnsclient.michaco.net/",
+    "Copyright": "Copyright (c) 2024 Michael Conrad",
+    "Authors": "MichaCo",
+    "License": "Apache-2.0",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "LicenseInformationOrigin": 0
+  }
+]

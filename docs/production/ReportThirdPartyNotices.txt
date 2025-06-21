@@ -4,3 +4,11 @@
 
 This project includes third-party libraries under open-source licenses.
 
+--------------------------------------------
+📦 Package: DnsClient (v1.8.0)
+🔖 License: Apache-2.0
+🌍 License URL: https://licenses.nuget.org/Apache-2.0
+👤 Authors: MichaCo
+🔗 Project: http://dnsclient.michaco.net/
+--------------------------------------------
+
